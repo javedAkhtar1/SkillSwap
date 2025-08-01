@@ -121,3 +121,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@theme {
+  --color-primary-btn: #0d47a1;
+  --color-primary-btn-hover: #E5E7EB;
+}

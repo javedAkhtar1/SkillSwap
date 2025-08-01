@@ -8,15 +8,33 @@ function Navbar() {
         <span className="text-blue-800 font-poppins">Skill</span>
         <span className="font-inter">Swap</span>
       </h1>
-      <div className="space-x-4">
-        <Link className="hover:text-blue-800" href="/">Home</Link>
-        <Link className="hover:text-blue-800" href="/browse">Browse</Link>
-        <Link className="hover:text-blue-800" href="/about">About</Link>
-        <Link className="hover:text-blue-800" href="/contact">Contact</Link>
-      </div> 
-      <div className="flex gap-3">
-        <Button variant="secondary" className="cursor-pointer hover:bg-gray-200">Login</Button>
-        <Button variant="default" className="cursor-pointer bg-blue-800 hover:bg-gray-200 hover:text-black">Signup</Button>
+      <div className="space-x-4 flex justify-between items-center">
+        <Link className="hover:text-blue-800" href="/">
+          Home
+        </Link>
+        <Link className="hover:text-blue-800" href="/browse">
+          Browse
+        </Link>
+        <Link className="hover:text-blue-800" href="/about">
+          About
+        </Link>
+        <Link className="hover:text-blue-800" href="/contact">
+          Contact
+        </Link>
+      </div>
+      <div className="flex gap-3 font-poppins">
+        <Button
+          variant="secondary"
+          className="cursor-pointer hover:bg-primary-btn-hover font-semibold"
+        >
+          Login
+        </Button>
+        <Button
+          variant="default"
+          className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold"
+        >
+          Signup
+        </Button>
       </div>
     </nav>
   );
