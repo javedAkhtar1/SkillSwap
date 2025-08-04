@@ -3,7 +3,7 @@ import React from "react";
 
 function Hero() {
   return (
-    <section className="h-[60vh] w-full bg-gradient-to-tr from-[#FAF9F6] to-blue-100">
+    <section className="min-h-screen flex justify-center items-center w-full bg-gradient-to-tr from-[#FAF9F6] to-blue-100">
       <div className="h-full mx-auto p-5 max-w-7xl flex flex-col justify-center items-center gap-4">
         <h1 className="text-5xl md:text-6xl font-bold text-blue-900 font-poppins text-center">
           Welcome to Skill<span className="text-black">Swap</span>

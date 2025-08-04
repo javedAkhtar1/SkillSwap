@@ -1,5 +1,5 @@
 import React from "react";
-import StepCards from "./StepCards";
+import StepsCard from "../cards/StepsCard";
 
 const STEPS = [
   {
@@ -42,28 +42,28 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section className="max-w-7xl py-7 mx-auto">
+    <section className="max-w-7xl py-15 mx-auto">
       <h3 className="text-3xl font-bold text-center font-poppins">How It Works</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center mt-4">
         {STEPS.slice(0, 3).map((step, index) => (
-          <StepCards
-            key={index}
+          <StepsCard
+          key={index}
             icon={step.icon}
             title={step.title}
             description={step.description}
             content={step.content}
-          />
+            />
         ))}
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 max-w-4xl mx-auto place-items-center">
         {STEPS.slice(3).map((step, index) => (
-          <StepCards
-            key={index + 3}
-            icon={step.icon}
-            title={step.title}
-            description={step.description}
-            content={step.content}
+          <StepsCard
+          key={index + 3}
+          icon={step.icon}
+          title={step.title}
+          description={step.description}
+          content={step.content}
           />
         ))}
       </div>

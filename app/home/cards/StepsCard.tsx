@@ -29,7 +29,7 @@ const iconComponents = {
   Repeat: Repeat,
 };
 
-function StepCards({ icon, title, description, content }: ICardProps) {
+function StepsCard({ icon, title, description, content }: ICardProps) {
   const IconComponent = iconComponents[icon as keyof typeof iconComponents];
 
   return (
@@ -41,11 +41,11 @@ function StepCards({ icon, title, description, content }: ICardProps) {
         </div>
         <CardDescription className="text-sm">{description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1">
-        <p>{content}</p>
+      <CardContent className="flex-1 overflow-auto max-h-[120px]">
+        <p className="break-words whitespace-pre-wrap">{content}</p>
       </CardContent>
     </Card>
   );
 }
 
-export default StepCards;
+export default StepsCard;
