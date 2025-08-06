@@ -1,7 +1,10 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Navbar() {
+  const router = useRouter();
   return (
     <nav className="max-w-7xl py-5 mx-auto flex justify-between">
       <h1 className="text-2xl font-bold">
@@ -25,6 +28,7 @@ function Navbar() {
       <div className="flex gap-3 font-poppins">
         <Button
           variant="secondary"
+          onClick={() => router.push('/login')}
           className="cursor-pointer hover:bg-primary-btn-hover font-semibold"
         >
           Login
