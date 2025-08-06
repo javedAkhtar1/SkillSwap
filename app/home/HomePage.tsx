@@ -5,6 +5,7 @@ import HowItWorks from './_components/HowItWorks'
 import PopularSkills from './_components/PopularSkills'
 import WhyUse from './_components/WhyUse'
 import Faq from './_components/Faq'
+import Footer from '@/components/shared/Footer'
 
 export default function HomePage() {
   return (
@@ -15,6 +16,7 @@ export default function HomePage() {
     <PopularSkills />
     <WhyUse />
     <Faq />
+    <Footer />  
     </>
   )
 }

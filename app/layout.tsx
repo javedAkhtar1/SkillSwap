@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Poppins, Inter, Nunito } from "next/font/google";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -9,6 +9,11 @@ const poppins = Poppins({
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
 });
 
@@ -34,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${poppins.style} ${inter.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${poppins.style} ${inter.variable} ${nunito.variable}`}>
         {children}
       </body>
     </html>

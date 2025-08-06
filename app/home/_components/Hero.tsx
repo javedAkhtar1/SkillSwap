@@ -8,7 +8,7 @@ function Hero() {
         <h1 className="text-5xl md:text-6xl font-bold text-blue-900 font-poppins text-center">
           Welcome to Skill<span className="text-black">Swap</span>
         </h1>
-        <p className="max-w-2xl text-center text-gray-600 text-lg">
+        <p className="max-w-2xl text-center text-gray-600 text-lg font-nunito">
           SkillSwap is a platform where people connect to teach what they know
           and learn what they don’t-for free. Whether it’s coding, design,
           music, or language exchange, you can find someone to swap skills with,
