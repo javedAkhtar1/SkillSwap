@@ -35,6 +35,7 @@ function Navbar() {
         </Button>
         <Button
           variant="default"
+          onClick={() => router.push('/signup')}
           className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold"
         >
           Signup
