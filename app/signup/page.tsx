@@ -120,7 +120,7 @@ function SignUpPage() {
         <Card className="w-[650px] h-auto my-8">
           <CardHeader>
             <CardTitle className="text-2xl text-center font-poppins">
-              Create an <span className="text-blue-800">Account</span>
+              Create an <span className="text-blue-800">Account</span>   
             </CardTitle>
           </CardHeader>
           <CardContent>
