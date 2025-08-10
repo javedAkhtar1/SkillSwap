@@ -15,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { FcGoogle } from "react-icons/fc";
 
 const loginSchema = z.object({
   email: z
@@ -103,9 +105,33 @@ function LoginPage() {
                 </Button>
               </form>
             </Form>
+            <div>
+              <div className="flex items-center my-2">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="mx-4 text-gray-400 font-inter text-sm">
+                  OR
+                </span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
+              <Button
+                variant={"outline"}
+                onClick={() => signIn("google", { callbackUrl: "/" })}
+                className="w-full h-10 font-nunito text-lg bg-gray-100 border-[.5px] border-gray-400 hover:bg-primary-btn-hover text-black cursor-pointer"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <FcGoogle className="h-8 w-8" />
+                  <p> Log in with Google</p>
+                </div>
+              </Button>
+            </div>
             <div className="flex justify-center mt-5 gap-2">
               <h2>Do not have an account?</h2>
-              <Link href="/signup" className="font-semibold underline text-blue-800 hover:text-blue-600">Signup</Link>
+              <Link
+                href="/signup"
+                className="font-semibold underline text-blue-800 hover:text-blue-600"
+              >
+                Signup
+              </Link>
             </div>
           </CardContent>
         </Card>
