@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,20 +17,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
-
-const loginSchema = z.object({
-  email: z
-    .string({
-      error: "Email is required",
-    })
-    .email("Invalid email address"),
-  password: z.string({
-    error: "Password is required",
-  }),
-});
+import { loginSchema } from "@/zod/schemas";
+import { Eye, EyeOff } from "lucide-react";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -45,12 +38,15 @@ function LoginPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-3 min-h-screen justify-center items-center bg-gradient-to-tr from-[#FAF9F6] to-blue-100">
-        <Card className="w-[550px] h-auto">
+      <div className="flex flex-col gap-3 min-h-screen justify-center items-center bg-gradient-to-tr from-[#FAF9F6] to-blue-100 sm:p-4 p-6">
+        <Card className="w-full max-w-[550px]">
           <CardHeader>
             <CardTitle className="text-2xl text-center font-poppins">
-              Login to <span className="text-blue-900">Skill</span>
-              <span className="text-black">Swap</span>
+              Login to{" "}
+              <Link href={"/"} className="hover:underline">
+                <span className="text-blue-900">Skill</span>
+                <span className="text-black">Swap</span>
+              </Link>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -64,9 +60,7 @@ function LoginPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-nunito text-lg">
-                        Email
-                      </FormLabel>
+                      <FormLabel className="text-md">Email</FormLabel>
                       <FormControl>
                         <Input
                           className="h-10"
@@ -74,7 +68,7 @@ function LoginPage() {
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -83,23 +77,35 @@ function LoginPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-nunito text-lg">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className="h-10"
-                          placeholder="••••••"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
+                      <FormLabel className="text-md">Password</FormLabel>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            className="h-10 pr-10"
+                            placeholder="••••••"
+                            {...field}
+                          />
+                        </FormControl>
+                        <button
+                          type="button"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
                 <Button
                   type="submit"
-                  className="w-full h-10 font-nunito text-lg bg-primary-btn hover:bg-primary-btn-hover hover:text-black cursor-pointer"
+                  className="w-full h-10 text-lg bg-primary-btn hover:bg-primary-btn-hover hover:text-black cursor-pointer"
                 >
                   Login
                 </Button>
@@ -116,21 +122,29 @@ function LoginPage() {
               <Button
                 variant={"outline"}
                 onClick={() => signIn("google", { callbackUrl: "/" })}
-                className="w-full h-10 font-nunito text-lg bg-gray-100 border-[.5px] border-gray-400 hover:bg-primary-btn-hover text-black cursor-pointer"
+                className="w-full h-10 text-lg bg-gray-100 border-[.5px] border-gray-400 hover:bg-primary-btn-hover text-black cursor-pointer"
               >
                 <div className="flex items-center justify-center gap-2">
-                  <FcGoogle className="h-8 w-8" />
-                  <p> Log in with Google</p>
+                  <FcGoogle className="h-6 w-6 md:h-8 md:w-8" />
+                  <p className="text-sm md:text-base">Log in with Google</p>
                 </div>
               </Button>
             </div>
-            <div className="flex justify-center mt-5 gap-2">
+            <div className="flex flex-col sm:flex-row justify-center items-center mt-5 gap-1 sm:gap-2">
               <h2>Do not have an account?</h2>
               <Link
                 href="/signup"
                 className="font-semibold underline text-blue-800 hover:text-blue-600"
               >
                 Signup
+              </Link>
+            </div>
+            <div className="flex justify-center items-center mt-1">
+              <Link
+                href="/"
+                className="font-semibold underline text-blue-800 hover:text-blue-600"
+              >
+                Back to home
               </Link>
             </div>
           </CardContent>

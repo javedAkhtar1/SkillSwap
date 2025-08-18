@@ -33,18 +33,27 @@ const SKILLS: ISkill[] = [
 function PopularSkills() {
   return (
     <section className="border-t">
-    <div className="max-w-7xl py-15 mx-auto">
-      <h3 className="text-3xl font-bold text-center font-poppins">
-        Popular Skills
-      </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center mt-4">
-        {SKILLS.map((skill, index) => (
-          <SkillsCard key={index} icon={skill.icon} name={skill.name} />
-        ))}
+      <div className="max-w-7xl py-15 mx-auto px-4">
+        <h3 className="text-3xl font-bold text-center font-poppins">
+          Popular Skills
+        </h3>
+        <div
+          className="
+            grid gap-6 mt-4
+            grid-cols-2
+            md:grid-cols-3
+            lg:grid-cols-4
+            items-stretch
+          "
+        >
+          {SKILLS.map((skill, index) => (
+            <SkillsCard key={index} icon={skill.icon} name={skill.name} />
+          ))}
+        </div>
       </div>
-    </div>
     </section>
   );
 }
+
 
 export default PopularSkills;
