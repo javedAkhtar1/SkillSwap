@@ -46,10 +46,10 @@ export default function Footer() {
 
         {/* Links */}
         <div className="flex justify-center gap-8 text-sm mb-6 text-slate-600">
-          <Link href="" className="hover:underline">
+          <Link href="/terms-and-conditions" className="hover:underline">
             Terms and Conditions
           </Link>
-          <Link href="#" className="hover:underline">
+          <Link href="/privacy-policy" className="hover:underline">
             Privacy Policy
           </Link>
         </div>
