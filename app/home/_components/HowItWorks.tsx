@@ -9,15 +9,14 @@ const STEPS = [
   { icon: "Repeat", title: "Learn & Teach Together", description: "Swap skills, help each other grow, and keep the cycle going.", content: "Enjoy teaching what you know and learning something new—it's a win-win." },
 ];
 
-// Desktop: 3 top, 2 centered below
 const DesktopLayout = () => (
   <>
-    <div className="grid grid-cols-3 gap-6 place-items-center mt-4">
+    <div className="grid grid-cols-3 gap-6 items-stretch mt-4">
       {STEPS.slice(0, 3).map((step, i) => (
         <StepsCard key={i} {...step} />
       ))}
     </div>
-    <div className="grid grid-cols-2 gap-6 mt-6 max-w-4xl mx-auto">
+    <div className="grid grid-cols-2 gap-6 mt-6 max-w-4xl mx-auto items-stretch">
       {STEPS.slice(3).map((step, i) => (
         <StepsCard key={i + 3} {...step} />
       ))}
@@ -25,11 +24,13 @@ const DesktopLayout = () => (
   </>
 );
 
-// Mobile/Tablet: 2x2 + 1 centered
 const MobileLayout = () => (
-  <div className="grid grid-cols-2 gap-6 place-items-center mt-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch mt-4">
     {STEPS.map((step, i) => (
-      <div key={i} className={`${i === 4 ? "col-span-2 flex justify-center" : ""}`}>
+      <div
+        key={i}
+        className={`${i === 4 ? "sm:col-span-2 flex justify-center" : ""}`}
+      >
         <StepsCard {...step} />
       </div>
     ))}

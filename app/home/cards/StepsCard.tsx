@@ -33,7 +33,13 @@ function StepsCard({ icon, title, description, content }: ICardProps) {
   const IconComponent = iconComponents[icon as keyof typeof iconComponents];
 
   return (
-    <Card className="w-full max-w-[350px] h-full flex flex-col shadow-md font-poppins">
+    <Card
+      className="
+            w-full h-full 
+            flex flex-col 
+            shadow-md font-poppins
+          "
+    >
       <CardHeader className="flex-1">
         <div className="flex gap-4 items-center font-inter">
           {IconComponent && <IconComponent className="h-8 w-8 text-blue-700" />}

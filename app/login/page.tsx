@@ -139,6 +139,14 @@ function LoginPage() {
                 Signup
               </Link>
             </div>
+            <div className="flex justify-center items-center mt-1">
+              <Link
+                href="/"
+                className="font-semibold underline text-blue-800 hover:text-blue-600"
+              >
+                Back to home
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -40,8 +40,8 @@ function SignUpPage() {
 
   function onSubmit(values: SignUpFormData) {
     if (!termsAccepted) {
-      console.log("Pls accept")
-      return 
+      console.log("Pls accept");
+      return;
     }
     console.log(values);
   }
@@ -143,8 +143,8 @@ function SignUpPage() {
                   <Checkbox
                     checked={termsAccepted}
                     onClick={() => {
-                      setTermsAccepted(prev => !prev)
-                      console.log(termsAccepted)
+                      setTermsAccepted((prev) => !prev);
+                      console.log(termsAccepted);
                     }}
                     className="text-sm border-gray-400 data-[state=checked]:bg-blue-800 data-[state=checked]:border-blue-800"
                   />{" "}
@@ -196,6 +196,14 @@ function SignUpPage() {
                 className="font-semibold underline text-blue-800 hover:text-blue-600"
               >
                 Login
+              </Link>
+            </div>
+            <div className="flex justify-center items-center mt-1">
+              <Link
+                href="/"
+                className="font-semibold underline text-blue-800 hover:text-blue-600"
+              >
+                Back to home
               </Link>
             </div>
           </CardContent>

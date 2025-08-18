@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { LucideIcon } from "lucide-react";
 
 interface ICardProps {
@@ -15,14 +10,21 @@ interface ICardProps {
 
 function WhyUseCard({ title, description, icon: Icon }: ICardProps) {
   return (
-    <Card className="w-full max-w-[350px] h-[170px] flex flex-col shadow-md font-poppins">
-      <CardHeader className="flex-1">
+    <Card
+      className="
+        w-full h-full 
+        flex flex-col 
+        shadow-md font-poppins
+      "
+    >
+      <CardHeader>
         <div className="flex gap-4 items-center font-inter">
-           <Icon className="h-8 w-8 text-blue-700" />
+          <Icon className="h-8 w-8 text-blue-700" />
           <CardTitle>{title}</CardTitle>
         </div>
       </CardHeader>
-       <CardContent className="flex-1 overflow-auto max-h-[120px]">
+
+      <CardContent className="flex-1">
         <p className="break-words whitespace-pre-wrap">{description}</p>
       </CardContent>
     </Card>

@@ -45,48 +45,50 @@ const WHY_USE: WhyUseItem[] = [
   },
 ];
 
+const DesktopLayout = () => (
+  <>
+    <div className="grid grid-cols-3 gap-6 items-stretch mt-4">
+      {WHY_USE.slice(0, 3).map((step, i) => (
+        <WhyUseCard key={i} {...step} />
+      ))}
+    </div>
+    <div className="grid grid-cols-2 gap-6 mt-6 max-w-4xl mx-auto items-stretch">
+      {WHY_USE.slice(3).map((step, i) => (
+        <WhyUseCard key={i + 3} {...step} />
+      ))}
+    </div>
+  </>
+);
+
+const MobileLayout = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch mt-4">
+    {WHY_USE.map((step, i) => (
+      <div
+        key={i}
+        className={`${i === 4 ? "sm:col-span-2 flex justify-center" : ""}`}
+      >
+        <WhyUseCard {...step} />
+      </div>
+    ))}
+  </div>
+);
+
+
 function WhyUse() {
   return (
     <section className="border-t">
-      <div className="max-w-7xl py-15 mx-auto">
+      <div className="max-w-7xl py-15 mx-auto px-4">
         <h3 className="text-3xl font-bold text-center font-poppins">
           Why use <span className="text-blue-900">Skill</span>Swap?
         </h3>
 
-        {/* Desktop: 3 on top, 2 centered below */}
-        <div className="hidden md:block mt-6 px-5">
-          <div className="grid grid-cols-3 gap-6 place-items-center">
-            {WHY_USE.slice(0, 3).map((item, index) => (
-              <WhyUseCard
-                key={index}
-                title={item.title}
-                description={item.description}
-                icon={item.icon}
-              />
-            ))}
-          </div>
-          <div className="grid grid-cols-2 gap-6 mt-6 max-w-2xl mx-auto place-items-center">
-            {WHY_USE.slice(3).map((item, index) => (
-              <WhyUseCard
-                key={index}
-                title={item.title}
-                description={item.description}
-                icon={item.icon}
-              />
-            ))}
-          </div>
+        <div className="block lg:hidden">
+          <MobileLayout />
         </div>
 
-        {/* Mobile/Tablet: responsive grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4 md:hidden max-w-4xl mx-auto place-items-center px-5">
-          {WHY_USE.map((item, index) => (
-            <WhyUseCard
-              key={index}
-              title={item.title}
-              description={item.description}
-              icon={item.icon}
-            />
-          ))}
+        {/* Desktop */}
+        <div className="hidden lg:block">
+          <DesktopLayout />
         </div>
       </div>
     </section>
