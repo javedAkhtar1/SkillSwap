@@ -142,7 +142,7 @@ function LoginPage() {
             <div className="flex justify-center items-center mt-1">
               <Link
                 href="/"
-                className="font-semibold underline text-blue-800 hover:text-blue-600"
+                className="font-semibold text-sm underline text-blue-800 hover:text-blue-600"
               >
                 Back to home
               </Link>

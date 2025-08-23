@@ -62,6 +62,7 @@ export const authOptions: NextAuthOptions = {
             profilePicture: user.image,
             provider: "google",
             profileComplete: false,
+            isEmailVerified: true,
           });
         }
       }

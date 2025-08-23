@@ -16,7 +16,7 @@ if (!cached) {
 
 async function dbConnect() {
   if (cached.conn) {
-    console.log("Database Already Connected!");
+    console.log("Database already connected!");
     return cached.conn;
   }
 
@@ -24,7 +24,7 @@ async function dbConnect() {
     try {
       console.log("Database connection requested...");
       await mongoose.connect(MONGO_URI);
-      console.log("Database connection request resolved. DB Connected!");
+      console.log("Database connection request resolved. Connection was established successfully.");
       return mongoose.connection;
     } catch (err) {
       console.log("Database connection request failed!");
