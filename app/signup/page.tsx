@@ -21,12 +21,15 @@ import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@radix-ui/react-label";
+import toast, { Toaster } from "react-hot-toast";
+import { useSignUpMutation } from "@/tanstack-query/mutation";
 
 type SignUpFormData = z.infer<typeof signupSchema>;
 
 function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const { mutate, isPending } = useSignUpMutation();
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signupSchema),
@@ -40,15 +43,17 @@ function SignUpPage() {
 
   function onSubmit(values: SignUpFormData) {
     if (!termsAccepted) {
-      console.log("Pls accept");
+      toast.error("Please accept the terms and conditions");
       return;
     }
-    console.log(values);
+    // console.log(values);
+    mutate(values);
   }
 
   return (
     <>
       <div className="flex flex-col gap-3 min-h-screen justify-center items-center bg-gradient-to-tr from-[#FAF9F6] to-blue-100 sm:p-4 p-6">
+        <Toaster />
         <Card className="w-full max-w-[650px] my-8">
           <CardHeader>
             <CardTitle className="text-2xl text-center font-poppins">
@@ -164,9 +169,10 @@ function SignUpPage() {
                 </div>
                 <Button
                   type="submit"
+                  disabled={isPending}
                   className="w-full h-10 text-lg bg-primary-btn hover:bg-primary-btn-hover hover:text-black cursor-pointer"
                 >
-                  Create Account
+                  {isPending ? "Processing..." : "Create Account"}
                 </Button>
               </form>
             </Form>

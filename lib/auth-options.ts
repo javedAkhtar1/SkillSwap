@@ -1,9 +1,10 @@
-import type { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from 'next-auth/'
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import dbConnect from "./dbConnect";
 import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
+import { ApiError } from "./api-error";
 
 export const authOptions: NextAuthOptions = {
   // providers
@@ -21,19 +22,30 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
-          throw new Error("Email and password are required");
+          throw new ApiError("Email and password are required", 400);
         }
         try {
           await dbConnect();
 
           const user = await User.findOne({ email: credentials.email });
-          if (!user) throw new Error("User not found");
+          if (!user) throw new ApiError("User not found", 404);
+
+          if (!user.isEmailVerified)
+            throw new ApiError(
+              "Email not verified. Please verify your email before logging in.",
+              401
+            );
+          if (!user.isActive)
+            throw new ApiError(
+              "Account is disabled. Please contact support.",
+              403
+            );
 
           const isValidPassword = await bcrypt.compare(
             credentials.password,
             user.password
           );
-          if (!isValidPassword) throw new Error("Invalid password");
+          if (!isValidPassword) throw new ApiError("Invalid password", 401);
 
           return {
             id: user._id.toString(),
@@ -55,7 +67,7 @@ export const authOptions: NextAuthOptions = {
         const existingUser = await User.findOne({ email: user.email });
 
         if (!existingUser) {
-          await User.create({
+          const newUser = await User.create({
             name: user.name || "New Skillswap User",
             username: user.email?.split("@")[0] || `user_${Date.now()}`,
             email: user.email,
@@ -64,6 +76,7 @@ export const authOptions: NextAuthOptions = {
             profileComplete: false,
             isEmailVerified: true,
           });
+          user.id = newUser._id.toString();
         }
       }
       return true;

@@ -19,10 +19,13 @@ import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { loginSchema } from "@/zod/schemas";
 import { Eye, EyeOff } from "lucide-react";
+import { useLoginMutation } from "@/tanstack-query/mutation";
+import { Toaster } from "react-hot-toast";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const { mutate, isPending } = useLoginMutation();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -33,12 +36,14 @@ function LoginPage() {
   });
 
   function onSubmit(values: LoginFormData) {
-    console.log(values);
+    // console.log(values);
+    mutate(values);
   }
 
   return (
     <>
       <div className="flex flex-col gap-3 min-h-screen justify-center items-center bg-gradient-to-tr from-[#FAF9F6] to-blue-100 sm:p-4 p-6">
+        <Toaster />
         <Card className="w-full max-w-[550px]">
           <CardHeader>
             <CardTitle className="text-2xl text-center font-poppins">
@@ -105,9 +110,10 @@ function LoginPage() {
                 />
                 <Button
                   type="submit"
+                  disabled={isPending}
                   className="w-full h-10 text-lg bg-primary-btn hover:bg-primary-btn-hover hover:text-black cursor-pointer"
                 >
-                  Login
+                  {isPending ? "Logging in..." : "Login"}
                 </Button>
               </form>
             </Form>

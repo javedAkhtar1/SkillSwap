@@ -25,6 +25,7 @@ const UserSchema = new Schema(
 
     // Email verification via dummy OTP
     isEmailVerified: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: false },
     otp: { type: String, default: null },
     otpExpiry: { type: Date, default: null },
   },

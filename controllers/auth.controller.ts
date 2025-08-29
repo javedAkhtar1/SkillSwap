@@ -1,6 +1,9 @@
 import { ApiError } from "@/lib/api-error";
 import { errorResponse, successResponse } from "@/lib/api-response";
-import { registerUser, verifyEmail } from "@/services/auth.service";
+import {
+  registerUser,
+  verifyEmail,
+} from "@/services/auth.service";
 
 export async function signupController(req: Request) {
   try {
@@ -32,7 +35,7 @@ export async function verifyEmailController(req: Request) {
     if (!email || !otp) {
       return errorResponse("Email and OTP are required", 400);
     }
-    const user = await verifyEmail({ email, otp });
+    await verifyEmail({ email, otp });
 
     return successResponse({ message: "Email verified successfully" }, 200);
   } catch (error: any) {
