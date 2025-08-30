@@ -1,4 +1,4 @@
-import { NextAuthOptions } from 'next-auth/'
+import { NextAuthOptions } from "next-auth/";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import dbConnect from "./dbConnect";
@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user._id.toString(),
             email: user.email,
+            username: user.username,
           };
         } catch (err) {
           throw err;
@@ -78,16 +79,24 @@ export const authOptions: NextAuthOptions = {
           });
           user.id = newUser._id.toString();
         }
+
+        // for attaching username in session.user
+        user.id = existingUser._id.toString();
+        user.username = existingUser.username;
       }
       return true;
     },
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.username = user.username;
+      }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.username = token.username as string;
       }
       return session;
     },

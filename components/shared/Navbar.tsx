@@ -4,12 +4,16 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, User, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { Skeleton } from "../ui/skeleton";
 
 function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { data: session, status } = useSession(); // this is how we can find out if someone is logged in with next auth
 
   return (
     <nav className="max-w-7xl py-5 mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,37 +51,59 @@ function Navbar() {
         </div>
 
         <div className="hidden md:flex gap-3 font-poppins">
-          <Button
-            variant="secondary"
-            onClick={() => router.push("/login")}
-            className="cursor-pointer hover:bg-primary-btn-hover font-semibold transition-colors duration-200"
-          >
-            Login
-          </Button>
-          <Button
-            variant="default"
-            onClick={() => router.push("/signup")}
-            className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold transition-colors duration-200"
-          >
-            Signup
-          </Button>
+          {status === "loading" ? (
+            <div className="flex gap-3">
+              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
+              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
+            </div>
+          ) : session ? (
+            <ButtonsForLoggedInUsers />
+          ) : (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => router.push("/login")}
+                className="cursor-pointer hover:bg-primary-btn-hover font-semibold transition-colors duration-200"
+              >
+                Login
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => router.push("/signup")}
+                className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold transition-colors duration-200"
+              >
+                Signup
+              </Button>
+            </>
+          )}
         </div>
 
         <div className="flex md:hidden items-center gap-4">
-          <Button
-            variant="secondary"
-            onClick={() => router.push("/login")}
-            className="cursor-pointer hover:bg-primary-btn-hover font-semibold py-1 px-3 text-sm transition-colors duration-200"
-          >
-            Login
-          </Button>
-          <Button
-            variant="default"
-            onClick={() => router.push("/signup")}
-            className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold py-1 px-3 text-sm transition-colors duration-200"
-          >
-            Signup
-          </Button>
+          {status === "loading" ? (
+            <div className="flex gap-3">
+              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
+              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
+            </div>
+          ) : session ? (
+            <ButtonsForLoggedInUsers />
+          ) : (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => router.push("/login")}
+                className="cursor-pointer hover:bg-primary-btn-hover font-semibold py-1 px-3 text-sm transition-colors duration-200"
+              >
+                Login
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => router.push("/signup")}
+                className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold py-1 px-3 text-sm transition-colors duration-200"
+              >
+                Signup
+              </Button>
+            </>
+          )}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="text-gray-700 hover:text-blue-800 focus:outline-none transition-colors duration-200"
@@ -151,3 +177,29 @@ function Navbar() {
 }
 
 export default Navbar;
+
+
+function ButtonsForLoggedInUsers() {
+  const router = useRouter();
+  const {data: session} = useSession();
+  return (
+    <div className="flex gap-3 font-poppins">
+      <Button
+        variant="secondary"
+        onClick={() => router.push(`/profile/${session?.user.username}`)}
+        className="cursor-pointer hover:bg-primary-btn-hover font-semibold py-1 px-3 text-sm transition-colors duration-200"
+      >
+        Profile
+        <User />
+      </Button>
+      <Button
+        variant="default"
+        onClick={() => router.push("/logout")}
+        className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold py-1 px-3 text-sm transition-colors duration-200"
+      >
+        Logout
+        <LogOut />
+      </Button>
+    </div>
+  );
+}
