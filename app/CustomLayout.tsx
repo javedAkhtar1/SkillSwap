@@ -9,7 +9,7 @@ import { SessionProvider } from "next-auth/react";
 
 const hiddenRoutes = {
   nav: ["/login", "/signup"],
-  footer: ["/login", "/signup"],
+  footer: ["/login", "/signup", "/profile"],
 };
 
 function LayoutWrapper({ children }: { children: React.ReactNode }) {
