@@ -24,3 +24,13 @@ export const userLogin = async (data: IUserLogin) => {
 
   return response;
 };
+
+export const verifyEmail = async (data: { email: string; otp: string }) => {
+  try {
+    const response = await axios.post("/api/auth/verify-email", data);
+    return response.data;
+  } catch (error) {
+    console.log("Error verifying email:", error);
+    throw error;
+  }
+};

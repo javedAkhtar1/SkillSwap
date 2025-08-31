@@ -15,37 +15,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
-import { signupSchema } from "@/zod/schemas";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@radix-ui/react-label";
-import toast, { Toaster } from "react-hot-toast";
-import { useSignUpMutation } from "@/tanstack-query/mutation";
+import { loginSchema } from "@/zod/schemas";
+import { Eye, EyeOff } from "lucide-react";
+import { useLoginMutation } from "@/tanstack-query/mutation";
 
-type SignUpFormData = z.infer<typeof signupSchema>;
-
-function SignUpPage() {
+type LoginFormData = z.infer<typeof loginSchema>;
+function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const { mutate, isPending } = useSignUpMutation();
+  const { mutate, isPending } = useLoginMutation();
 
-  const form = useForm<SignUpFormData>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      name: "",
-      username: "",
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: SignUpFormData) {
-    if (!termsAccepted) {
-      toast.error("Please accept the terms and conditions");
-      return;
-    }
+  function onSubmit(values: LoginFormData) {
     // console.log(values);
     mutate(values);
   }
@@ -53,49 +42,22 @@ function SignUpPage() {
   return (
     <>
       <div className="flex flex-col gap-3 min-h-screen justify-center items-center bg-gradient-to-tr from-[#FAF9F6] to-blue-100 sm:p-4 p-6">
-        <Toaster />
-        <Card className="w-full max-w-[650px] my-8">
+        <Card className="w-full max-w-[550px]">
           <CardHeader>
             <CardTitle className="text-2xl text-center font-poppins">
-              Create an <span className="text-blue-800">Account</span>
+              Login to{" "}
+              <Link href={"/"} className="hover:underline">
+                <span className="text-blue-900">Skill</span>
+                <span className="text-black">Swap</span>
+              </Link>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+                className="space-y-8"
               >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-md">Full Name</FormLabel>
-                      <FormControl>
-                        <Input className="h-10" placeholder="name" {...field} />
-                      </FormControl>
-                      <FormMessage className="min-h-3 text-xs" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-md">Username</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="h-10"
-                          placeholder="username"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="min-h-3 text-xs" />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="email"
@@ -105,11 +67,11 @@ function SignUpPage() {
                       <FormControl>
                         <Input
                           className="h-10"
-                          placeholder="email@example.com"
+                          placeholder="email"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage className="min-h-3 text-xs" />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -140,39 +102,16 @@ function SignUpPage() {
                           )}
                         </button>
                       </div>
-                      <FormMessage className="min-h-3 text-xs" />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
-                <div className="flex items-center gap-2 font-inter">
-                  <Checkbox
-                    checked={termsAccepted}
-                    onClick={() => {
-                      setTermsAccepted((prev) => !prev);
-                      console.log(termsAccepted);
-                    }}
-                    className="text-sm border-gray-400 data-[state=checked]:bg-blue-800 data-[state=checked]:border-blue-800"
-                  />{" "}
-                  <Label className="text-sm">
-                    I agree to{" "}
-                    <Link
-                      href={"/terms-and-conditions"}
-                      className="text-blue-900"
-                    >
-                      terms and conditions
-                    </Link>{" "}
-                    and{" "}
-                    <Link href={"/privacy-policy"} className="text-blue-900">
-                      privacy policy.
-                    </Link>
-                  </Label>
-                </div>
                 <Button
                   type="submit"
                   disabled={isPending}
                   className="w-full h-10 text-lg bg-primary-btn hover:bg-primary-btn-hover hover:text-black cursor-pointer"
                 >
-                  {isPending ? "Processing..." : "Create Account"}
+                  {isPending ? "Logging in..." : "Login"}
                 </Button>
               </form>
             </Form>
@@ -191,17 +130,17 @@ function SignUpPage() {
               >
                 <div className="flex items-center justify-center gap-2">
                   <FcGoogle className="h-6 w-6 md:h-8 md:w-8" />
-                  <p className="text-sm md:text-base">Continue with Google</p>
+                  <p className="text-sm md:text-base">Log in with Google</p>
                 </div>
               </Button>
             </div>
             <div className="flex flex-col sm:flex-row justify-center items-center mt-5 gap-1 sm:gap-2">
-              <h2>Already have an account?</h2>
+              <h2>Do not have an account?</h2>
               <Link
-                href="/login"
+                href="/signup"
                 className="font-semibold underline text-blue-800 hover:text-blue-600"
               >
-                Login
+                Signup
               </Link>
             </div>
             <div className="flex justify-center items-center mt-1">
@@ -219,4 +158,4 @@ function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+export default LoginPage;

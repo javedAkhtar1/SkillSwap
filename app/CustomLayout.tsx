@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "react-hot-toast";
 
 const hiddenRoutes = {
-  nav: ["/login", "/signup"],
-  footer: ["/login", "/signup", "/profile"],
+  nav: ["/login", "/signup", "/verify-email"],
+  footer: ["/login", "/signup", "/profile", "/verify-email"],
 };
 
 function LayoutWrapper({ children }: { children: React.ReactNode }) {
@@ -24,6 +25,7 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SessionProvider>
+        <Toaster />
         <QueryClientProvider client={queryClient}>
           <Suspense
             fallback={
