@@ -10,10 +10,6 @@ export async function getProfileByUsernameController(
 ) {
   try {
     const { username } = params;
-    const isValidUser = await User.findOne({ username });
-    if (!isValidUser) {
-      throw new ApiError("User not found with that username", 404);
-    }
     const user = await getProfileByUsername(username);
 
     return successResponse(user, 200);

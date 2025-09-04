@@ -1,27 +1,48 @@
+"use client";
 import React, { useState } from "react";
-import { 
-  MessageSquare, 
-  Send, 
-  Inbox, 
-  User, 
-  Lock, 
+import {
+  MessageSquare,
+  Send,
+  Inbox,
+  User,
+  Lock,
   ChevronLeft,
   ChevronRight,
   UserCog,
 } from "lucide-react";
+import ChangePassword from "./ChangePassword";
+import EditProfile from "./EditProfile";
+import ProfilePage from "./ProfilePage";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [activeItem, setActiveItem] = useState("profile"); 
+  const [activeItem, setActiveItem] = useState("profile");
 
   const menuItems = [
     { id: "profile", label: "Profile", icon: <User size={20} /> },
     { id: "messages", label: "Messages", icon: <MessageSquare size={20} /> },
     { id: "requests-sent", label: "Requests Sent", icon: <Send size={20} /> },
-    { id: "requests-received", label: "Requests Received", icon: <Inbox size={20} /> },
+    {
+      id: "requests-received",
+      label: "Requests Received",
+      icon: <Inbox size={20} />,
+    },
     { id: "edit-profile", label: "Edit Profile", icon: <UserCog size={20} /> },
-    { id: "change-password", label: "Change Password", icon: <Lock size={20} /> }
+    {
+      id: "change-password",
+      label: "Change Password",
+      icon: <Lock size={20} />,
+    },
   ];
+
+  const componentsMap: Record<string, React.ReactNode> = {
+    profile: <ProfilePage />,
+    messages: <div>Messages</div>,
+    "requests-sent": <div>Requests Sent</div>,
+    "requests-received": <div>Requests Received</div>,
+    "edit-profile": <EditProfile />,
+    "change-password": <ChangePassword />,
+  };
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -30,7 +51,7 @@ const Sidebar = () => {
   return (
     <div className="flex h-screen bg-gray-100 rounded-2xl">
       {/* Sidebar */}
-      <div 
+      <div
         className={`bg-white shadow-lg transition-all duration-300 ease-in-out ${
           collapsed ? "w-20" : "w-64"
         }`}
@@ -73,16 +94,13 @@ const Sidebar = () => {
       {/* Main content */}
       <div className="flex-1 p-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          {menuItems.find(item => item.id === activeItem)?.label || "Dashboard"}
+          {menuItems.find((item) => item.id === activeItem)?.label ||
+            "Dashboard"}
         </h1>
         <div className="bg-white p-6 rounded-lg shadow">
-          <p className="text-gray-600">
-            This is the content for{" "}
-            <span className="font-medium">
-              {menuItems.find(item => item.id === activeItem)?.label}
-            </span>
-            . Select different items from the sidebar to navigate.
-          </p>
+          {componentsMap[activeItem] || (
+            <p>Select a menu item to view content.</p>
+          )}
         </div>
       </div>
     </div>
