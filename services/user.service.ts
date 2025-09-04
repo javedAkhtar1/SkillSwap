@@ -5,7 +5,14 @@ import User from "@/models/user.model";
 export async function getProfileByUsername(username: string) {
   await dbConnect();
 
-  const user = await User.findOne({ username }).select("-password");
+  const user = await User.findOne({ username }).select({
+    password: 0,
+    otp: 0,
+    otpExpiry: 0,
+    __v: 0,
+    createdAt: 0,
+    updatedAt: 0,
+  });
   if (!user) {
     throw new ApiError("User not found with that username", 404);
   }

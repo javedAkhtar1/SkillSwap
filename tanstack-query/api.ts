@@ -1,6 +1,9 @@
 import axios from "axios";
 import { IUserSignup, IUserLogin } from "@/types/types";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export const userSignup = async (data: IUserSignup) => {
   try {
@@ -12,18 +15,27 @@ export const userSignup = async (data: IUserSignup) => {
   }
 };
 
-export const userLogin = async (data: IUserLogin) => {
+export const userLogin = async (
+  data: { email: string; password: string },
+  router: AppRouterInstance
+) => {
   const response = await signIn("credentials", {
     redirect: false,
     ...data,
   });
+
+  if (response?.error === "EMAIL_NOT_VERIFIED") {
+    toast.error("Email not verified. Redirecting...");
+    router.push(`/verify-email?e=${encodeURIComponent(data.email)}`);
+    return null; // mark as "handled"
+  }
 
   if (response?.error) {
     throw new Error(response.error);
   }
 
   return response;
-};
+}
 
 export const verifyEmail = async (data: { email: string; otp: string }) => {
   try {
@@ -31,6 +43,17 @@ export const verifyEmail = async (data: { email: string; otp: string }) => {
     return response.data;
   } catch (error) {
     console.log("Error verifying email:", error);
+    throw error;
+  }
+};
+
+
+export const getProfileByUsername = async (username: string) => {
+  try {
+    const response = await axios.get(`/api/user/${username}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error getting profile by username:", error);
     throw error;
   }
 };

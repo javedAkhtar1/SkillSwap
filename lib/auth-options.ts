@@ -30,11 +30,9 @@ export const authOptions: NextAuthOptions = {
           const user = await User.findOne({ email: credentials.email });
           if (!user) throw new ApiError("User not found", 404);
 
-          if (!user.isEmailVerified)
-            throw new ApiError(
-              "Email not verified. Please verify your email before logging in.",
-              401
-            );
+          if (!user.isEmailVerified) {
+            throw new Error("EMAIL_NOT_VERIFIED"); // to catch this and redirect 
+          }
           if (!user.isActive)
             throw new ApiError(
               "Account is disabled. Please contact support.",

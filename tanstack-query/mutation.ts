@@ -27,20 +27,20 @@ export const useLoginMutation = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: userLogin,
-    onSuccess: () => {
+    mutationFn: (data: { email: string; password: string }) =>
+      userLogin(data, router),
+
+    onSuccess: (res) => {
+      if (!res) return; // case when redirected to verify-email
       toast.success("Logged in successfully");
       router.push("/");
     },
+
     onError: (error: any) => {
       toast.error(error.message || "Login failed");
     },
-    onSettled: () => {
-      // console.log("Login mutation settled");
-    },
   });
 };
-
 export const useVerifyEmailMutation = () => {
   const router = useRouter();
 

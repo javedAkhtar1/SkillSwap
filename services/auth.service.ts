@@ -43,7 +43,7 @@ export async function registerUser({
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const otp = "123456"; // hard coded for development
-  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins -- DUMMY
 
   const user = await User.create({
     name,
@@ -86,10 +86,6 @@ export async function verifyEmail({
     throw new ApiError("Invalid OTP", 400);
   }
 
-  if (user.otpExpiry < new Date()) {
-    throw new ApiError("OTP expired", 400);
-  }
-
   user.isEmailVerified = true;
   user.isActive = true;
   user.otp = null;
@@ -97,4 +93,17 @@ export async function verifyEmail({
   await user.save();
 
   return user;
+}
+
+export async function changePassword({
+  oldPassword,
+  newPassword
+}: {
+  oldPassword: string;
+  newPassword: string;
+}) {
+  await dbConnect();
+
+  console.log(oldPassword, newPassword)
+
 }

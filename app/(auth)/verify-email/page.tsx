@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useVerifyEmailMutation } from "@/tanstack-query/mutation";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 
 function VerifyEmail() {
   const [otp, setOtp] = useState(Array.from({ length: 6 }, () => ""));
@@ -54,6 +54,10 @@ function VerifyEmail() {
       inputRefs.current[index - 1]?.focus();
     }
   };
+
+  if (!email) {
+    redirect("/");
+  }
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();

@@ -8,13 +8,26 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Settings, UserPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+import ProfileSidebar from "../_components/ProfileSidebar";
+import { useGetProfileByUsername } from "@/tanstack-query/query";
+import { TUserProfile } from "@/types/types";
+import Loading from "@/components/shared/Loading";
 
 function ProfilePage() {
   const { data: session } = useSession();
-  const {username} = useParams()
+  const { username } = useParams();
+  const { data: apiResponse, isLoading: profileLoading } =
+    useGetProfileByUsername(username as string);
+  const profile: TUserProfile = apiResponse?.data || {};
+  console.log(JSON.stringify(profile));
+
+  if (profileLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-start justify-center py-4 px-4 sm:px-6 lg:px-8">
+      <ProfileSidebar />
       <div className="w-full h-full lg:max-w-7xl max-w-4xl mt-14 mx-auto">
         <Card className="shadow-lg">
           <CardHeader className="pb-4">
@@ -25,30 +38,34 @@ function ProfilePage() {
                     src="https://github.com/shadcn.png"
                     alt="Profile"
                   />
-                  <AvatarFallback className="text-2xl">JD</AvatarFallback>
+                  <AvatarFallback className="text-2xl">{profile.username}</AvatarFallback>
                 </Avatar>
 
                 <div className="text-center md:text-left mt-4 md:mt-0">
                   <CardTitle className="text-2xl md:text-3xl font-bold">
-                    John Doe
+                    {profile.name}
                   </CardTitle>
-                  <p className="text-slate-600 mt-2">
-                    UX Designer & Frontend Developer
-                  </p>
+                  <p className="text-slate-600 mt-2">@{profile.username}</p>
                   <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
                     <Button className="gap-2 bg-primary-btn hover:bg-primary-btn-hover hover:text-black text-sm h-9 hover:cursor-pointer">
                       <UserPlus size={16} />
                       Send Request
                     </Button>
-                    <Button variant="outline" className="gap-2 text-sm h-9 bg-secondary-btn hover:cursor-pointer">
+                    <Button
+                      variant="outline"
+                      className="gap-2 text-sm h-9 bg-secondary-btn hover:cursor-pointer"
+                    >
                       <MessageCircle size={16} />
                       Message
                     </Button>
                     {session?.user.username === username && (
-                      <Button variant="outline" className="gap-2 text-sm h-9 bg-secondary-btn hover:cursor-pointer">
-                      <Settings size={16} />
-                      Settings
-                    </Button>
+                      <Button
+                        variant="outline"
+                        className="gap-2 text-sm h-9 bg-secondary-btn hover:cursor-pointer"
+                      >
+                        <Settings size={16} />
+                        Settings
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -84,12 +101,7 @@ function ProfilePage() {
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold mb-3">About Me</h3>
-                <p className="text-slate-700 leading-relaxed">
-                  Passionate about creating beautiful and functional user
-                  interfaces. Love to share knowledge and learn new
-                  technologies. Currently working on improving accessibility in
-                  web applications.
-                </p>
+                <p className="text-slate-700 leading-relaxed">{profile.bio}</p>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
