@@ -5,21 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Settings, UserPlus } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { MessageCircle, UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
-import ProfileSidebar from "../_components/ProfileSidebar";
 import { useGetProfileByUsername } from "@/tanstack-query/query";
 import { TUserProfile } from "@/types/types";
 import Loading from "@/components/shared/Loading";
 
 function ProfilePage() {
-  const { data: session } = useSession();
   const { username } = useParams();
   const { data: apiResponse, isLoading: profileLoading } =
     useGetProfileByUsername(username as string);
   const profile: TUserProfile = apiResponse?.data || {};
-  console.log(JSON.stringify(profile));
 
   if (profileLoading) {
     return <Loading />;
@@ -38,7 +34,9 @@ function ProfilePage() {
                     src="https://github.com/shadcn.png"
                     alt="Profile"
                   />
-                  <AvatarFallback className="text-2xl">{profile.username}</AvatarFallback>
+                  <AvatarFallback className="text-2xl">
+                    {profile.username}
+                  </AvatarFallback>
                 </Avatar>
 
                 <div className="text-center md:text-left mt-4 md:mt-0">
@@ -58,15 +56,6 @@ function ProfilePage() {
                       <MessageCircle size={16} />
                       Message
                     </Button>
-                    {session?.user.username === username && (
-                      <Button
-                        variant="outline"
-                        className="gap-2 text-sm h-9 bg-secondary-btn hover:cursor-pointer"
-                      >
-                        <Settings size={16} />
-                        Settings
-                      </Button>
-                    )}
                   </div>
                 </div>
               </div>

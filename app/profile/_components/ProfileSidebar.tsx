@@ -49,41 +49,48 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 rounded-2xl">
+    <div className="flex flex-col md:flex-row md:h-screen min-h-screen bg-gray-100 rounded-2xl">
       {/* Sidebar */}
       <div
-        className={`bg-white shadow-lg transition-all duration-300 ease-in-out ${
-          collapsed ? "w-20" : "w-64"
+        className={`bg-white md:border-none border-t shadow-lg transition-all duration-300 ease-in-out w-full md:w-auto md:flex-shrink-0 ${
+          collapsed ? "md:w-20" : "md:w-64"
         }`}
       >
-        <div className="p-4 flex items-center justify-between border-b">
-          {!collapsed && (
-            <h2 className="text-xl font-semibold text-gray-800">Navigation</h2>
-          )}
+        {/* Header */}
+        <div className="p-4 items-center hidden md:flex justify-between border-b">
+          <h2 className={`text-xl font-semibold text-gray-800 ${collapsed ? "hidden" : ""}`}>
+            Navigation
+          </h2>
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="hidden md:block px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors"
           >
             {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
         </div>
 
-        <nav className="p-4">
-          <ul className="space-y-2">
+        {/* Navigation */}
+        <nav className="p-2 md:p-4">
+          <ul className="flex md:flex-col justify-evenly gap-1 md:gap-2 md:overflow-x-visible pb-2">
             {menuItems.map((item) => (
               <li key={item.id}>
                 <button
                   onClick={() => setActiveItem(item.id)}
-                  className={`w-full flex items-center p-3 rounded-lg transition-colors ${
+                  className={`flex items-center p-2 md:p-3 rounded-lg transition-colors min-w-max md:w-full ${
                     activeItem === item.id
                       ? "bg-blue-100 text-blue-600"
                       : "text-gray-600 hover:bg-gray-100"
+                  } ${
+                    collapsed ? "md:justify-center" : "justify-start"
                   }`}
+                  title={item.label}
                 >
                   <span className="flex-shrink-0">{item.icon}</span>
-                  {!collapsed && (
-                    <span className="ml-3 font-medium">{item.label}</span>
-                  )}
+                  <span className={`ml-2 md:ml-3 font-medium text-sm md:text-base ${
+                    collapsed ? "hidden md:hidden" : "hidden md:block"
+                  }`}>
+                    {item.label}
+                  </span>
                 </button>
               </li>
             ))}
@@ -91,13 +98,11 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 p-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          {menuItems.find((item) => item.id === activeItem)?.label ||
-            "Dashboard"}
+      <div className="flex-1 p-4 md:p-8 w-full overflow-hidden">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">
+          {menuItems.find((item) => item.id === activeItem)?.label || "Dashboard"}
         </h1>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="w-full h-full overflow-auto">
           {componentsMap[activeItem] || (
             <p>Select a menu item to view content.</p>
           )}
