@@ -22,9 +22,7 @@ function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-start justify-center py-4 px-4 sm:px-6 lg:px-8">
-      {/* <ProfileSidebar /> */}
-      <div className="w-full h-full lg:max-w-7xl max-w-4xl mt-14 mx-auto">
+      <div className="w-full h-auto lg:max-w-7xl max-w-4xl mx-auto">
         <Card className="shadow-lg">
           <CardHeader className="pb-4">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
@@ -159,7 +157,6 @@ function ProfilePage() {
           </CardContent>
         </Card>
       </div>
-    </div>
   );
 }
 

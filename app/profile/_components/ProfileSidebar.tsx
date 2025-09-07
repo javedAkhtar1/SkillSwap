@@ -8,7 +8,7 @@ import {
   Lock,
   ChevronLeft,
   ChevronRight,
-  UserCog,
+  Edit2,
 } from "lucide-react";
 import ChangePassword from "./ChangePassword";
 import EditProfile from "./EditProfile";
@@ -27,7 +27,7 @@ const Sidebar = () => {
       label: "Requests Received",
       icon: <Inbox size={20} />,
     },
-    { id: "edit-profile", label: "Edit Profile", icon: <UserCog size={20} /> },
+    { id: "edit-profile", label: "Edit Profile", icon: <Edit2 size={20} /> },
     {
       id: "change-password",
       label: "Change Password",
@@ -58,7 +58,11 @@ const Sidebar = () => {
       >
         {/* Header */}
         <div className="p-4 items-center hidden md:flex justify-between border-b">
-          <h2 className={`text-xl font-semibold text-gray-800 ${collapsed ? "hidden" : ""}`}>
+          <h2
+            className={`text-xl font-semibold text-gray-800 ${
+              collapsed ? "hidden" : ""
+            }`}
+          >
             Navigation
           </h2>
           <button
@@ -80,15 +84,15 @@ const Sidebar = () => {
                     activeItem === item.id
                       ? "bg-blue-100 text-blue-600"
                       : "text-gray-600 hover:bg-gray-100"
-                  } ${
-                    collapsed ? "md:justify-center" : "justify-start"
-                  }`}
+                  } ${collapsed ? "md:justify-center" : "justify-start"}`}
                   title={item.label}
                 >
                   <span className="flex-shrink-0">{item.icon}</span>
-                  <span className={`ml-2 md:ml-3 font-medium text-sm md:text-base ${
-                    collapsed ? "hidden md:hidden" : "hidden md:block"
-                  }`}>
+                  <span
+                    className={`ml-2 md:ml-3 font-medium text-sm md:text-base ${
+                      collapsed ? "hidden md:hidden" : "hidden md:block"
+                    }`}
+                  >
                     {item.label}
                   </span>
                 </button>
@@ -100,13 +104,12 @@ const Sidebar = () => {
 
       <div className="flex-1 p-4 md:p-8 w-full overflow-hidden">
         <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">
-          {menuItems.find((item) => item.id === activeItem)?.label || "Dashboard"}
+          {menuItems.find((item) => item.id === activeItem)?.label ||
+            "Dashboard"}
         </h1>
-        <div className="w-full h-full overflow-auto">
-          {componentsMap[activeItem] || (
-            <p>Select a menu item to view content.</p>
-          )}
-        </div>
+        {componentsMap[activeItem] || (
+          <p>Select a menu item to view content.</p>
+        )}
       </div>
     </div>
   );
