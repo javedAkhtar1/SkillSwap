@@ -1,6 +1,7 @@
 import { ApiError } from "@/lib/api-error";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/user.model";
+import bcrypt from "bcryptjs";
 
 export async function getProfileByUsername(username: string) {
   await dbConnect();
@@ -20,5 +21,28 @@ export async function getProfileByUsername(username: string) {
   if (!user) {
     throw new ApiError("User not found with that username", 404);
   }
+  return user;
+}
+
+export async function changePassword({
+  email,
+  oldPassword,
+  newPassword,
+}: {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}) {
+  await dbConnect();
+  const user = await User.findOne({ email });
+  if (!user) throw new ApiError("User not found", 404);
+
+  const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+  if (!isValidPassword) throw new ApiError("Invalid old password", 401);
+ 
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedNewPassword;
+  await user.save();
+
   return user;
 }

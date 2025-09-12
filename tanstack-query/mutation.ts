@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { userLogin, userSignup, verifyEmail } from "./api";
+import { changePassword, userLogin, userSignup, verifyEmail } from "./api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -53,6 +53,20 @@ export const useVerifyEmailMutation = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || "Email verification failed");
+    },
+  });
+};
+
+export const useChangePasswordMutation = (onSuccessCallback?: () => void) => {
+  return useMutation({
+    mutationFn: (data: { oldPassword: string; newPassword: string }) =>
+      changePassword(data),
+    onSuccess: () => {
+      toast.success("Password changed successfully");
+      if (onSuccessCallback) onSuccessCallback();
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Password change failed");
     },
   });
 };

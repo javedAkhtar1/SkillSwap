@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useChangePasswordMutation } from "@/tanstack-query/mutation";
 
 function ChangePassword() {
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -23,6 +24,15 @@ function ChangePassword() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const { mutate, isPending } = useChangePasswordMutation(() => {
+    setIsSubmitted(true);
+    setFormData({
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -33,18 +43,7 @@ function ChangePassword() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle password change logic here
-    console.log("Password change submitted:", formData);
-    setIsSubmitted(true);
-    // Reset form after submission
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    }, 2000);
+    mutate(formData);
   };
 
   return (
@@ -153,9 +152,10 @@ function ChangePassword() {
 
               <Button
                 type="submit"
+                disabled={isPending}
                 className="w-full py-6 text-md bg-primary-btn hover:bg-primary-btn-hover hover:text-black cursor-pointer"
               >
-                Update Password
+                {isPending ? "Processing..." : "Update Password"}
               </Button>
             </form>
           )}

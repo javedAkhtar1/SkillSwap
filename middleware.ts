@@ -1,5 +1,5 @@
-import withAuth from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
 
 export default withAuth(
   function middleware() {
@@ -16,7 +16,6 @@ export default withAuth(
         ) {
           return true;
         }
-
         if (pathname === "/" || pathname === "/browse") {
           return true;
         }
@@ -27,5 +26,12 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/api/auth/:path*", "/login", "/signup", "/", "/browse"],
+  matcher: [
+    "/api/auth/:path*",
+    "/login",
+    "/signup",
+    "/",
+    "/browse",
+    "/api/user/change-password"
+  ],
 };

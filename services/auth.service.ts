@@ -2,9 +2,6 @@ import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/user.model";
 import { ApiError } from "@/lib/api-error";
-import jwt, { Jwt, JwtPayload } from "jsonwebtoken";
-import { serialize } from "cookie";
-import { successResponse } from "@/lib/api-response";
 
 const usernameRegex = /^[a-z0-9._]+$/;
 
@@ -93,17 +90,4 @@ export async function verifyEmail({
   await user.save();
 
   return user;
-}
-
-export async function changePassword({
-  oldPassword,
-  newPassword
-}: {
-  oldPassword: string;
-  newPassword: string;
-}) {
-  await dbConnect();
-
-  console.log(oldPassword, newPassword)
-
 }

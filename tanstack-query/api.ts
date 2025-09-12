@@ -57,3 +57,13 @@ export const getProfileByUsername = async (username: string) => {
     throw error;
   }
 };
+
+export const changePassword = async (data: { oldPassword: string; newPassword: string }) => {
+  try {
+    const response = await axios.post("/api/user/change-password", data);
+    return response.data;
+  } catch (error) {
+    console.log("Error changing password:", error);
+    throw error;
+  }
+};
