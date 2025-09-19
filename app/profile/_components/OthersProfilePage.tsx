@@ -11,7 +11,7 @@ import { useGetProfileByUsername } from "@/tanstack-query/query";
 import { TUserProfile } from "@/types/types";
 import Loading from "@/components/shared/Loading";
 
-function ProfilePage() {
+function OthersProfilePage() {
   const { username } = useParams();
   const { data: apiResponse, isLoading: profileLoading } =
     useGetProfileByUsername(username as string);
@@ -58,7 +58,7 @@ function ProfilePage() {
                 </div>
               </div>
 
-              {/* Stats section - on right for larger screens, centered below for smaller */}
+             
               <div className="bg-slate-100 p-3 md:p-4 rounded-lg self-center md:self-start mt-4 md:mt-0">
                 <div className="flex gap-4 md:gap-6">
                   <div className="text-center">
@@ -160,4 +160,4 @@ function ProfilePage() {
   );
 }
 
-export default ProfilePage;
+export default OthersProfilePage;

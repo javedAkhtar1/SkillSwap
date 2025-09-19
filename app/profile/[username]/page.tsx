@@ -1,9 +1,9 @@
 import React from 'react'
-import ProfileSidebar from '../_components/ProfileSidebar'
+import OthersProfilePage from '../_components/OthersProfilePage'
 
 function page() {
   return (
-    <ProfileSidebar />
+    <OthersProfilePage />
   )
 }
 

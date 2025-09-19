@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import ChangePassword from "./ChangePassword";
 import EditProfile from "./EditProfile";
-import ProfilePage from "./ProfilePage";
+import MyProfilePage from "./MyProfilePage";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -36,7 +36,7 @@ const Sidebar = () => {
   ];
 
   const componentsMap: Record<string, React.ReactNode> = {
-    profile: <ProfilePage />,
+    profile: <MyProfilePage />,
     messages: <div>Messages</div>,
     "requests-sent": <div>Requests Sent</div>,
     "requests-received": <div>Requests Received</div>,
