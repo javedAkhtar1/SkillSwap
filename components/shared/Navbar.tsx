@@ -16,7 +16,7 @@ function Navbar() {
   const { data: session, status } = useSession(); // this is how we can find out if someone is logged in with next auth
 
   return (
-    <nav className="max-w-7xl py-5 mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="max-w-7xl py-5 mx-auto px-4 sm:px-6 lg:px-8"> 
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">
           <span className="text-blue-800 font-poppins">Skill</span>
@@ -181,12 +181,11 @@ export default Navbar;
 
 function ButtonsForLoggedInUsers() {
   const router = useRouter();
-  const {data: session} = useSession();
   return (
     <div className="flex gap-3 font-poppins">
       <Button
         variant="secondary"
-        onClick={() => router.push(`/profile/${session?.user.username}`)}
+        onClick={() => router.push(`/profile/me`)}
         className="cursor-pointer hover:bg-primary-btn-hover font-semibold py-1 px-3 text-sm transition-colors duration-200"
       >
         Profile

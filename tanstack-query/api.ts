@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IUserSignup, IUserLogin } from "@/types/types";
+import { IUserSignup, IUserLogin, TCompleteProfileData } from "@/types/types";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
@@ -67,3 +67,26 @@ export const changePassword = async (data: { oldPassword: string; newPassword: s
     throw error;
   }
 };
+
+export const uploadImageToCloudinary = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axios.post("/api/upload", formData);
+    return response.data;
+  }
+  catch (error) {
+    console.log("Error uploading image:", error);
+    throw error;
+  }
+}
+
+export const completeProfile = async (data: TCompleteProfileData) => {
+  try {
+    const response = await axios.post("/api/user/complete-profile", data);
+    return response.data;
+  } catch (error) {
+    console.log("Error completing profile:", error);
+    throw error;
+  }
+}

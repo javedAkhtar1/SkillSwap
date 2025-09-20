@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { completeProfileSchema } from "@/zod/schemas";
 import { Input } from "@/components/ui/input";
+import { useCompleteProfile, useUploadImage } from "@/tanstack-query/mutation";
+import toast from "react-hot-toast";
 
 const skills = [
   "Web Development",
@@ -47,6 +49,12 @@ const skills = [
 type CompleteProfileFormData = z.infer<typeof completeProfileSchema>;
 
 function CompleteProfilePage() {
+  const { mutateAsync: saveImage, isPending: uploadPending } = useUploadImage();
+  const { mutate: saveCompleteProfile, isPending: completePending } =
+    useCompleteProfile();
+
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+
   const form = useForm<CompleteProfileFormData>({
     resolver: zodResolver(completeProfileSchema),
     defaultValues: {
@@ -58,22 +66,28 @@ function CompleteProfilePage() {
     },
   });
 
-  function onSubmit(values: CompleteProfileFormData) {
-    console.log(values);
-  }
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          form.setValue("profilePicture", event.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    setProfileImageFile(file as File);
   };
+
+  async function onSubmit(values: CompleteProfileFormData) {
+    // console.log(values);
+    if (!profileImageFile) {
+      toast.error("Please select a profile picture");
+      return;
+    }
+    const { data } = await saveImage(profileImageFile);
+
+    const completeProfileData = {
+      ...values,
+      profilePicture: data.imageUrl,
+    };
+
+    if (!uploadPending) {
+      saveCompleteProfile(completeProfileData);
+    }
+  }
 
   return (
     <>
@@ -94,7 +108,13 @@ function CompleteProfilePage() {
                 <div className="flex flex-col items-center mb-4">
                   <label className="cursor-pointer flex flex-col items-center">
                     <Avatar className="w-24 h-24 mb-2">
-                      <AvatarImage src={form.watch("profilePicture")} />
+                      <AvatarImage
+                        src={
+                          profileImageFile
+                            ? URL.createObjectURL(profileImageFile)
+                            : ""
+                        }
+                      />
                       <AvatarFallback>U</AvatarFallback>
                     </Avatar>
                     <input
@@ -267,9 +287,10 @@ function CompleteProfilePage() {
 
                 <Button
                   type="submit"
+                  disabled={uploadPending || completePending}
                   className="w-full h-10 text-lg bg-primary-btn hover:bg-primary-btn-hover hover:text-black cursor-pointer"
                 >
-                  Save
+                  {uploadPending || completePending ? "Saving..." : "Save"}
                 </Button>
               </form>
             </Form>

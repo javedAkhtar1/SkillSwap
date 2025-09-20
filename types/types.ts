@@ -24,3 +24,11 @@ export type TUserProfile = {
   isActive: boolean;
   isEmailVerified: boolean;
 };
+
+export type TCompleteProfileData = {
+  age: number;
+  bio: string;
+  profilePicture: string| undefined;
+  skillsToLearn: string[];
+  skillsToTeach: string[];
+}

@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { changePassword, userLogin, userSignup, verifyEmail } from "./api";
+import { changePassword, completeProfile, uploadImageToCloudinary, userLogin, userSignup, verifyEmail } from "./api";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { TCompleteProfileData } from "@/types/types";
 
 export const useSignUpMutation = () => {
   const router= useRouter();
@@ -70,3 +71,29 @@ export const useChangePasswordMutation = (onSuccessCallback?: () => void) => {
     },
   });
 };
+
+export const useUploadImage = () => {
+  return useMutation({
+    mutationFn: (file: File) => uploadImageToCloudinary(file),
+    onSuccess: () => {
+      console.log("Image uploaded successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Image upload failed");
+    }
+  })
+}
+
+export const useCompleteProfile = () => {
+  const router = useRouter();
+  return useMutation({
+    mutationFn: (data: TCompleteProfileData) => completeProfile(data),
+    onSuccess: () => {
+      toast.success("Profile completed successfully");
+      router.push("/profile/me");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Profile completion failed");
+    }
+  })
+}

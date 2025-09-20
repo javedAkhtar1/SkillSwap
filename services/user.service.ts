@@ -39,10 +39,44 @@ export async function changePassword({
 
   const isValidPassword = await bcrypt.compare(oldPassword, user.password);
   if (!isValidPassword) throw new ApiError("Invalid old password", 401);
- 
+
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
   user.password = hashedNewPassword;
   await user.save();
 
   return user;
+}
+
+export async function completeProfile(
+  age: number,
+  bio: string,
+  profilePicture: string,
+  skillsToLearn: string[],
+  skillsToTeach: string[],
+  email: string
+) {
+  await dbConnect();
+
+  const updatedUser = await User.findOneAndUpdate(
+    { email },
+    {
+      age,
+      bio,
+      profilePicture,
+      skillsToLearn,
+      skillsToTeach,
+      profileComplete: true,
+    },
+    { new: true, runValidators: true }
+  ).select({
+    password: 0,
+    otp: 0,
+    otpExpiry: 0,
+    __v: 0,
+    createdAt: 0,
+    updatedAt: 0,
+  });
+  
+  if (!updatedUser) throw new ApiError("User not found", 404);
+  return updatedUser.toObject();
 }
