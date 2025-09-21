@@ -28,6 +28,9 @@ const UserSchema = new Schema(
     isActive: { type: Boolean, default: false },
     otp: { type: String, default: null },
     otpExpiry: { type: Date, default: null },
+
+    //
+    friends: [{type: Schema.Types.ObjectId, ref: "User"}]
   },
   { timestamps: true }
 );

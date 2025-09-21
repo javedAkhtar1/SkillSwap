@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,11 +16,15 @@ function MyProfilePage() {
 
   const { data: apiResponse, isLoading: profileLoading } =
     useGetProfileByUsername(username as string);
-  const profile: TUserProfile = apiResponse?.data || {};
 
   if (profileLoading) {
     return <Loading />;
   }
+  const profile: TUserProfile = {
+    ...apiResponse?.data,
+    skillsToTeach: apiResponse?.data?.skillsToTeach || [],
+    skillsToLearn: apiResponse?.data?.skillsToLearn || [],
+  };
 
   return (
     <div className="w-full h-auto lg:max-w-7xl max-w-4xl mx-auto">
@@ -44,7 +47,8 @@ function MyProfilePage() {
             <div className="flex flex-col md:flex-row items-center gap-6 flex-1">
               <Avatar className="h-28 w-28 md:h-32 md:w-32 border-4 border-white shadow-md">
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
+                  // src="https://github.com/shadcn.png"
+                  src={profile.profilePicture}
                   alt="Profile"
                 />
                 <AvatarFallback className="text-2xl">
@@ -103,24 +107,11 @@ function MyProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary" className="text-sm">
-                      React
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      TypeScript
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      UI/UX Design
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      Figma
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      CSS Animations
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      Next.js
-                    </Badge>
+                    {profile.skillsToTeach.map((item) => (
+                      <Badge key={item} variant="secondary" className="text-sm">
+                        {item}
+                      </Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -135,21 +126,11 @@ function MyProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="text-sm">
-                      Three.js
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      GraphQL
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      AWS
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      Machine Learning
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      Rust
-                    </Badge>
+                    {profile.skillsToLearn.map((item) => (
+                      <Badge key={item} variant="outline" className="text-sm">
+                        {item}
+                      </Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
