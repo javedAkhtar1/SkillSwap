@@ -1,62 +1,44 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogOut, Menu, User, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSession } from "next-auth/react";
-import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/context/authProvider"; 
 
 function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const { data: session, status } = useSession(); // this is how we can find out if someone is logged in with next auth
+  const { data: session } = useAuth();
 
   return (
-    <nav className="max-w-7xl py-5 mx-auto px-4 sm:px-6 lg:px-8"> 
+    <nav className="max-w-7xl py-5 mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">
           <span className="text-blue-800 font-poppins">Skill</span>
           <span className="font-inter">Swap</span>
         </h1>
 
+        {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6 items-center">
-          <Link
-            className="hover:text-blue-800 transition-colors duration-200"
-            href="/"
-          >
+          <Link className="hover:text-blue-800 transition-colors duration-200" href="/">
             Home
           </Link>
-          <Link
-            className="hover:text-blue-800 transition-colors duration-200"
-            href="/browse"
-          >
+          <Link className="hover:text-blue-800 transition-colors duration-200" href="/browse">
             Browse
           </Link>
-          <Link
-            className="hover:text-blue-800 transition-colors duration-200"
-            href="/about"
-          >
+          <Link className="hover:text-blue-800 transition-colors duration-200" href="/about">
             About
           </Link>
-          <Link
-            className="hover:text-blue-800 transition-colors duration-200"
-            href="/contact"
-          >
+          <Link className="hover:text-blue-800 transition-colors duration-200" href="/contact">
             Contact
           </Link>
         </div>
 
+        {/* Right side (Auth buttons or Profile/Logout) */}
         <div className="hidden md:flex gap-3 font-poppins">
-          {status === "loading" ? (
-            <div className="flex gap-3">
-              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
-              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
-            </div>
-          ) : session ? (
+          {session ? (
             <ButtonsForLoggedInUsers />
           ) : (
             <>
@@ -78,13 +60,9 @@ function Navbar() {
           )}
         </div>
 
+        {/* Mobile Menu Button */}
         <div className="flex md:hidden items-center gap-4">
-          {status === "loading" ? (
-            <div className="flex gap-3">
-              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
-              <Skeleton className="h-10 w-20 bg-gray-200 animate-pulse rounded-md" />
-            </div>
-          ) : session ? (
+          {session ? (
             <ButtonsForLoggedInUsers />
           ) : (
             <>
@@ -114,6 +92,7 @@ function Navbar() {
         </div>
       </div>
 
+      {/* Mobile Dropdown */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -144,7 +123,6 @@ function Navbar() {
               >
                 Home
               </Link>
-
               <Link
                 className="block hover:text-blue-800 py-2 transition-colors duration-200"
                 href="/browse"
@@ -152,7 +130,6 @@ function Navbar() {
               >
                 Browse
               </Link>
-
               <Link
                 className="block hover:text-blue-800 py-2 transition-colors duration-200"
                 href="/about"
@@ -160,7 +137,6 @@ function Navbar() {
               >
                 About
               </Link>
-
               <Link
                 className="block hover:text-blue-800 py-2 transition-colors duration-200"
                 href="/contact"
@@ -177,7 +153,6 @@ function Navbar() {
 }
 
 export default Navbar;
-
 
 function ButtonsForLoggedInUsers() {
   const router = useRouter();

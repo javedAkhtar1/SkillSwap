@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "@/context/authProvider";
 
 const hiddenRoutes = {
   nav: ["/login", "/signup", "/verify-email"],
@@ -25,24 +26,26 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       <SessionProvider>
-        <Toaster />
-        <QueryClientProvider client={queryClient}>
-          <Suspense
-            fallback={
-              <main className="min-h-screen flex items-center justify-center">
-                <div className="w-full max-w-3xl space-y-4">
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-64 w-full" />
-                  <Skeleton className="h-12 w-1/2" />
-                </div>
-              </main>
-            }
-          >
-            {!hideNav && <Navbar />}
-            <main className="min-h-screen">{children}</main>
-            {!hideFooter && <Footer />}
-          </Suspense>
-        </QueryClientProvider>
+        <AuthProvider>
+          <Toaster />
+          <QueryClientProvider client={queryClient}>
+            <Suspense
+              fallback={
+                <main className="min-h-screen flex items-center justify-center">
+                  <div className="w-full max-w-3xl space-y-4">
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-64 w-full" />
+                    <Skeleton className="h-12 w-1/2" />
+                  </div>
+                </main>
+              }
+            >
+              {!hideNav && <Navbar />}
+              <main className="min-h-screen">{children}</main>
+              {!hideFooter && <Footer />}
+            </Suspense>
+          </QueryClientProvider>
+        </AuthProvider>
       </SessionProvider>
     </>
   );
