@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "typeRoots": ["./types", "./node_modules/@types", "./src/types"],
   },
-  "include": ["server.ts", "src/**/*", "./types/**/*.d.ts"],
+  "include": ["server.ts", "src/**/*", "./types/**/*.d.ts", "../types/next-auth.d.ts"],
 }

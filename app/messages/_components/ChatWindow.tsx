@@ -9,8 +9,8 @@ function ChatWindow({ conversationId }: { conversationId: string }) {
   const [text, setText] = useState("");
   const { sendMessage } = useChat(
     conversationId,
-    data?.user.id as string,
-    data?.user.username as string
+    data?.user?.id as string,
+    data?.user?.username as string
   );
 
 
