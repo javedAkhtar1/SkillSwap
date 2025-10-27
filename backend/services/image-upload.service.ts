@@ -8,7 +8,7 @@ export const uploadImage = async (file: Express.Multer.File) => {
         folder: "skillswap/profiles",
         resource_type: "image",
       },
-      (error, result) => {
+      (error: any, result: any) => {
         if (error || !result) {
           reject(new ApiError("Image upload failed", 500));
         } else {
