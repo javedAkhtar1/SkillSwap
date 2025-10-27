@@ -1,18 +1,35 @@
-"use client"
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import useChat from "@/hooks/useChat";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/authProvider";
 
 function ChatWindow({ conversationId }: { conversationId: string }) {
-  const { sendMessage } = useChat(conversationId);
+  const { data } = useAuth();
+  const [text, setText] = useState("");
+  const { sendMessage } = useChat(
+    conversationId,
+    data?.user.id as string,
+    data?.user.username as string
+  );
 
-  const handleSend = () => {
-    sendMessage({ conversation: conversationId, text: "Hello!" });
+
+  const handleSend = async () => {
+    if (!text.trim()) return;
+    await sendMessage(text);
+    setText("");
   };
 
   return (
     <div>
-      <Button onClick={handleSend}>Send</Button>
+      <label>Message:</label>
+      <input
+        className="border border-gray-300 p-2"
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <Button onClick={handleSend}>Send</Button>{" "}
     </div>
   );
 }

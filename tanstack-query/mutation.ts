@@ -1,15 +1,27 @@
-import { useMutation } from "@tanstack/react-query";
-import { changePassword, completeProfile, uploadImageToCloudinary, userLogin, userSignup, verifyEmail } from "./api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  changePassword,
+  completeProfile,
+  sendMessages,
+  uploadImageToCloudinary,
+  userLogin,
+  userSignup,
+  verifyEmail,
+} from "./api";
 import toast from "react-hot-toast";
-import { redirect, useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { TCompleteProfileData } from "@/types/types";
+import { useRouter } from "next/navigation";
+import {
+  TCompleteProfileData,
+  TMessage,
+  TMessageData,
+  TMessagesResponse,
+} from "@/types/types";
 
 export const useSignUpMutation = () => {
-  const router= useRouter();
+  const router = useRouter();
   return useMutation({
     mutationFn: userSignup,
-   onSuccess: (data, variables) => {
+    onSuccess: (data, variables) => {
       const email = variables.email;
       toast.success("Account created successfully");
       router.push(`/verify-email?e=${encodeURIComponent(email)}`);
@@ -80,9 +92,9 @@ export const useUploadImage = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || "Image upload failed");
-    }
-  })
-}
+    },
+  });
+};
 
 export const useCompleteProfile = () => {
   const router = useRouter();
@@ -94,6 +106,76 @@ export const useCompleteProfile = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || "Profile completion failed");
-    }
-  })
-}
+    },
+  });
+};
+
+export const useSendMessage = (
+  conversationId: string,
+  senderId: string,
+  senderName: string
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: TMessageData) => sendMessages(data),
+
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: ["messages", conversationId],
+      });
+
+      // get previous cached response
+      const previous = queryClient.getQueryData<TMessagesResponse>([
+        "messages",
+        conversationId,
+      ]);
+
+      const previousMessages = previous?.messages || [];
+
+      // create temp message
+      const tempMessage: TMessage = {
+        _id: "temp-" + Date.now(),
+        conversation: conversationId,
+        sender: { _id: senderId, name: senderName },
+        text: variables.text,
+        readBy: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        __v: 0,
+      };
+
+      // update cache optimistically
+      queryClient.setQueryData(
+        ["messages", conversationId],
+        (old?: TMessagesResponse) => ({
+          messages: [...(old?.messages || []), tempMessage],
+        })
+      );
+
+      return { previous, previousMessages, tempMessage };
+    },
+
+    onError: (err, _, context) => {
+      console.error("Message send failed", err);
+      if (context?.previous) {
+        queryClient.setQueryData(
+          ["messages", conversationId],
+          context.previous
+        );
+      }
+    },
+
+    onSuccess: (newMessage: TMessage, _, context) => {
+      queryClient.setQueryData(
+        ["messages", conversationId],
+        (old?: TMessagesResponse) => ({
+          messages: (old?.messages || []).map((m) =>
+            m._id === context?.tempMessage._id ? newMessage : m
+          ),
+        })
+      );
+    },
+  });
+};
+

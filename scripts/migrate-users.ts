@@ -1,6 +1,6 @@
 import "dotenv/config";
-import dbConnect from "../lib/dbConnect";
-import User from "../models/user.model";
+import dbConnect from "../backend/lib/dbConnect";
+import User from "../backend/models/user.model";
 
 async function migrateUsers() {
   await dbConnect();
