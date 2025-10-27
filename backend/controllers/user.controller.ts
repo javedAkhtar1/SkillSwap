@@ -6,8 +6,6 @@ import {
   getProfileByUsername,
 } from "../services/user.service";
 import { Request, Response } from "express";
-import { getServerSession } from "next-auth/next";
-import { getToken } from "next-auth/jwt";
 
 interface Params {
   username: string;
@@ -40,14 +38,12 @@ export async function changePasswordController(req: Request, res: Response) {
       cookies: req.cookies, // if you use cookie-parser
     };
 
-    const token = await getToken({
-      req: nextReq as any, // cast to satisfy types
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
+    const user = (req as any).user;
+    const email = user.email;
     // console.log("Session token:", token);
 
-    if (!token || !token.email) return errorResponse(res, "Unauthorized", 401);
+  
+    if (!email) throw new ApiError("Unauthorized", 401);
 
     const { oldPassword, newPassword } = req.body;
 
@@ -60,12 +56,16 @@ export async function changePasswordController(req: Request, res: Response) {
     }
 
     await changePassword({
-      email: token.email,
+      email,
       oldPassword,
       newPassword,
     });
 
-    return successResponse(res, { message: "Password changed successfully" }, 200);
+    return successResponse(
+      res,
+      { message: "Password changed successfully" },
+      200
+    );
   } catch (error: any) {
     if (error instanceof ApiError) {
       return errorResponse(res, error.message, error.status);
@@ -83,12 +83,10 @@ export async function completeProfileController(req: Request, res: Response) {
       cookies: req.cookies, // if you use cookie-parser
     };
 
-    const token = await getToken({
-      req: nextReq as any, // cast to satisfy types
-      secret: process.env.NEXTAUTH_SECRET,
-    });
+    const user = (req as any).user;
+    const email = user.email;
 
-    if (!token || !token.email) throw new ApiError("Unauthorized", 401);
+    if (!email) throw new ApiError("Unauthorized", 401);
 
     const { age, bio, profilePicture, skillsToLearn, skillsToTeach } = req.body;
 
@@ -98,7 +96,7 @@ export async function completeProfileController(req: Request, res: Response) {
       profilePicture,
       skillsToLearn,
       skillsToTeach,
-      token.email
+      email
     );
 
     return successResponse(res, result, 200);
