@@ -31,7 +31,7 @@
 //           if (!user) throw new ApiError("User not found", 404);
 
 //           if (!user.isEmailVerified) {
-//             throw new Error("EMAIL_NOT_VERIFIED"); // to catch this and redirect 
+//             throw new Error("EMAIL_NOT_VERIFIED"); // to catch this and redirect
 //           }
 //           if (!user.isActive)
 //             throw new ApiError(
@@ -131,48 +131,52 @@ export const authOptions: NextAuthOptions = {
     }),
 
     CredentialsProvider({
-  name: "Credentials",
-  credentials: {
-    email: { label: "Email", type: "email" },
-    password: { label: "Password", type: "password" },
-  },
-  async authorize(credentials) {
-    if (!credentials?.email || !credentials.password) return null;
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials.password) return null;
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-      });
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(credentials),
+            }
+          );
 
-      const data = await res.json();
+          const data = await res.json();
 
-      // ✅ handle backend error cases
-      if (!res.ok || data.success === false) {
-        if (data.code === "EMAIL_NOT_VERIFIED") {
-          // Throw explicit error string for frontend to catch
-          throw new Error("EMAIL_NOT_VERIFIED");
+          // ✅ handle backend error cases
+          if (!res.ok || data.success === false) {
+            if (data.code === "EMAIL_NOT_VERIFIED") {
+              // Throw explicit error string for frontend to catch
+              throw new Error("EMAIL_NOT_VERIFIED");
+            }
+
+            throw new Error(data.message || "Invalid credentials");
+          }
+
+          // Backend returns user info directly
+          const user = data.data?.user || data.user || data;
+
+          if (!user || !user.id) {
+            throw new Error("Invalid user data from API");
+          }
+
+          return user as MyUser;
+        } catch (err) {
+          if (err instanceof Error) {
+            throw new Error(err.message);
+          }
+          throw new Error("LOGIN_FAILED");
         }
-
-        throw new Error(data.message || "Invalid credentials");
-      }
-
-      // ✅ Backend returns user info directly
-      const user = data.data?.user || data.user || data;
-
-      if (!user || !user.id) {
-        throw new Error("Invalid user data from API");
-      }
-
-      return user as MyUser;
-    } catch (err: any) {
-      // ✅ This message is what ends up in signIn(...).error
-      throw new Error(err.message || "LOGIN_FAILED");
-    }
-  },
-})
-
+      },
+    }),
   ],
 
   callbacks: {
