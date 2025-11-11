@@ -4,7 +4,6 @@ import User from "../models/user.model";
 import bcrypt from "bcryptjs";
 
 export async function getProfileByUsername(username: string) {
-  await dbConnect();
   const isValidUser = await User.findOne({ username });
   if (!isValidUser) {
     throw new ApiError("User not found with that username", 404);
@@ -76,7 +75,8 @@ export async function completeProfile(
     createdAt: 0,
     updatedAt: 0,
   });
-  
+
   if (!updatedUser) throw new ApiError("User not found", 404);
   return updatedUser.toObject();
 }
+

@@ -61,7 +61,7 @@ export const verifyEmail = async (data: { email: string; otp: string }) => {
 export const getProfileByUsername = async (username: string) => {
   try {
     const response = await customAxios.get(
-      `/api/user/${username}`
+      `/api/user`
     );
     return response.data;
   } catch (error) {

@@ -116,6 +116,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import customAxios from "./axios-interceptor";
 
 interface MyUser {
   id: string;
@@ -151,7 +152,7 @@ export const authOptions: NextAuthOptions = {
 
           const data = await res.json();
 
-          // ✅ handle backend error cases
+          // handle backend error cases
           if (!res.ok || data.success === false) {
             if (data.code === "EMAIL_NOT_VERIFIED") {
               // Throw explicit error string for frontend to catch
@@ -180,6 +181,29 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+    async signIn({ user, account }) {
+      // Only run for Google sign in
+      if (account?.provider === "google") {
+        try {
+          const response = await customAxios.post(`/api/auth/google-login`, {
+            name: user.name,
+            email: user.email,
+            image: user.image,
+          });
+
+          const dbUser = response?.data?.user;
+          if (dbUser) {
+            user.id = dbUser._id;
+            user.username = dbUser.username;
+            user.email = dbUser.email;
+            user.image = dbUser.profilePicture || user.image;
+          }
+        } catch (err) {
+          console.error("Failed to sync Google user:", err);
+        }
+      }
+      return true; // continue login flow
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -189,8 +213,11 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
+        // session.user.id = token.id as string;
+        // session.user.username = token.username as string;
         session.user.id = token.id as string;
         session.user.username = token.username as string;
+        session.user.email = token.email as string;
       }
       return session;
     },

@@ -108,3 +108,4 @@ export async function completeProfileController(req: Request, res: Response) {
     return errorResponse(res, "Something went wrong", 500);
   }
 }
+

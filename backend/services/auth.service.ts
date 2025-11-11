@@ -129,3 +129,35 @@ export async function credentialLogin({
     username: user.username,
   };
 }
+
+
+export async function oAuthLogin({
+  name,
+  email,
+  image,
+}: {
+  name: string;
+  email: string;
+  image: string;
+}) {
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      name: name || "Skillswap User",
+      username: email.split("@")[0],
+      email,
+      profilePicture: image || "",
+      provider: "google",
+      profileComplete: false,
+      isEmailVerified: true,
+      isActive: true,
+    });
+  }
+
+  return {
+    id: user._id.toString(),
+    email: user.email,
+    username: user.username,
+  };
+}

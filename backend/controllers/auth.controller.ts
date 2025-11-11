@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { errorResponse, successResponse } from "../lib/api-response";
-import { credentialLogin, registerUser, verifyEmail } from "../services/auth.service";
+import { credentialLogin, oAuthLogin, registerUser, verifyEmail } from "../services/auth.service";
 import { ApiError } from "../lib/api-error";
 
 // -------------------- SIGNUP --------------------
@@ -69,5 +69,25 @@ export async function credentialLoginController(req: Request, res: Response) {
 
     console.error("Unexpected login error:", err);
     return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
+
+export async function oAuthController(req: Request, res: Response) {
+  try {
+    const { name, email, image } = req.body;
+
+    if (!email) {
+      return errorResponse(res, "Email is required", 400);
+    }
+
+    const result = await oAuthLogin({ name, email, image });
+
+    return successResponse(res, { user: result }, 200);
+  } catch (error: any) {
+    if (error instanceof ApiError) {
+      return errorResponse(res, error.message, error.status);
+    }
+    console.error("Unexpected error:", error);
+    return errorResponse(res, "Something went wrong", 500);
   }
 }

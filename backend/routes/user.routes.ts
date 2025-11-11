@@ -6,7 +6,6 @@ import {
 } from "../controllers/user.controller";
 import { uploadImageController } from "../controllers/image-upload.controller";
 import { upload } from "../middlewares/upload";
-import { verifyAuth } from "../middlewares/verifyAuth";
 
 export const userRouter = express.Router();
 
