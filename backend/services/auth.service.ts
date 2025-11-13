@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import dbConnect from "../lib/dbConnect";
 import User from "../models/user.model";
 import { ApiError } from "../lib/api-error";
+import cloudinary from "../lib/cloudinary";
+import axios from "axios"
 
 const usernameRegex = /^[a-z0-9._]+$/;
 
@@ -43,7 +45,6 @@ export async function registerUser({
 
   // Dummy OTP for development
   const otp = "123456";
-  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
   const user = await User.create({
     name,
@@ -55,7 +56,7 @@ export async function registerUser({
     isEmailVerified: false,
     isActive: false,
     otp,
-    otpExpiry,
+    otpExpiry: null,
   });
 
   return user;
@@ -143,11 +144,41 @@ export async function oAuthLogin({
   let user = await User.findOne({ email });
 
   if (!user) {
+    let uploadedImage = "";
+
+    try {
+      if (image) {
+        const imgResp = await axios.get(image, {
+          responseType: "arraybuffer",
+        });
+
+        // Upload buffer to Cloudinary
+        const uploaded = await new Promise<any>((resolve, reject) => {
+          const upload = cloudinary.uploader.upload_stream(
+            {
+              folder: "skillswap/profiles",
+            },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            }
+          );
+
+          upload.end(Buffer.from(imgResp.data));
+        });
+
+        uploadedImage = uploaded.secure_url;
+      }
+    } catch (err) {
+      console.warn("Google image upload failed, using fallback:", err);
+      uploadedImage = image || ""; // fallback to google image
+    }
+
     user = await User.create({
       name: name || "Skillswap User",
       username: email.split("@")[0],
       email,
-      profilePicture: image || "",
+      profilePicture: uploadedImage,
       provider: "google",
       profileComplete: false,
       isEmailVerified: true,
@@ -159,5 +190,6 @@ export async function oAuthLogin({
     id: user._id.toString(),
     email: user.email,
     username: user.username,
+    profilePicture: user.profilePicture,
   };
 }

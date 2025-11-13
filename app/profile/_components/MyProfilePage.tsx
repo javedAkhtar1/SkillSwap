@@ -12,10 +12,10 @@ import Link from "next/link";
 
 function MyProfilePage() {
   const { data: session } = useSession();
-  const username = session?.user?.username;
+  const query = session?.user?.username || session?.user?.email;
 
   const { data: apiResponse, isLoading: profileLoading } =
-    useGetProfileByUsername(username as string);
+    useGetProfileByUsername(query as string);
 
   if (profileLoading) {
     return <Loading />;
@@ -25,7 +25,8 @@ function MyProfilePage() {
     skillsToTeach: apiResponse?.data?.skillsToTeach || [],
     skillsToLearn: apiResponse?.data?.skillsToLearn || [],
   };
-
+  console.log(profile.profilePicture)
+  
   return (
     <div className="w-full h-auto lg:max-w-7xl max-w-4xl mx-auto">
       {profile.profileComplete === false && (

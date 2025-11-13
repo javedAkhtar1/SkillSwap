@@ -58,10 +58,10 @@ export const verifyEmail = async (data: { email: string; otp: string }) => {
   }
 };
 
-export const getProfileByUsername = async (username: string) => {
+export const getProfileByUsername = async (query: string) => {
   try {
     const response = await customAxios.get(
-      `/api/user`
+      `/api/user/profile?q=${query}` // can be username or email
     );
     return response.data;
   } catch (error) {

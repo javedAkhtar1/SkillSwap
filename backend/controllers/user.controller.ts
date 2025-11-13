@@ -3,7 +3,7 @@ import { errorResponse, successResponse } from "../lib/api-response";
 import {
   completeProfile,
   changePassword,
-  getProfileByUsername,
+  getProfile,
 } from "../services/user.service";
 import { Request, Response } from "express";
 
@@ -11,24 +11,26 @@ interface Params {
   username: string;
 }
 
-export async function getProfileByUsernameController(
-  req: Request<Params>,
-  res: Response
-) {
+export async function getProfileController(req: Request, res: Response) {
   try {
-    const { username } = req.params;
-    const user = await getProfileByUsername(username);
+    const query = req.query.q as string;
+
+    if (!query) {
+      return errorResponse(res, "Missing query parameter 'q'", 400);
+    }
+
+    const user = await getProfile(query);
 
     return successResponse(res, user, 200);
   } catch (error: any) {
     if (error instanceof ApiError) {
       return errorResponse(res, error.message, error.status);
     }
-    console.error("Unexpected error:", error);
-    return errorResponse(error, error.message, 500);
+
+    console.error("Unexpected error in getProfileController:", error);
+    return errorResponse(res, "Something went wrong", 500);
   }
 }
-
 // -------------------- CHANGE PASSWORD --------------------
 export async function changePasswordController(req: Request, res: Response) {
   try {
@@ -78,13 +80,10 @@ export async function changePasswordController(req: Request, res: Response) {
 // -------------------- COMPLETE PROFILE --------------------
 export async function completeProfileController(req: Request, res: Response) {
   try {
-    const nextReq = {
-      headers: req.headers,
-      cookies: req.cookies, // if you use cookie-parser
-    };
-
     const user = (req as any).user;
+    console.log(user, "USERRRR")
     const email = user.email;
+    // console.log("eMAIL", email)
 
     if (!email) throw new ApiError("Unauthorized", 401);
 

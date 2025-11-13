@@ -3,13 +3,11 @@ import dbConnect from "../lib/dbConnect";
 import User from "../models/user.model";
 import bcrypt from "bcryptjs";
 
-export async function getProfileByUsername(username: string) {
-  const isValidUser = await User.findOne({ username });
-  if (!isValidUser) {
-    throw new ApiError("User not found with that username", 404);
-  }
-
-  const user = await User.findOne({ username }).select({
+export async function getProfile(query: string) {
+  // Try username first, then email
+  const user = await User.findOne({
+    $or: [{ username: query }, { email: query }],
+  }).select({
     password: 0,
     otp: 0,
     otpExpiry: 0,
@@ -17,9 +15,11 @@ export async function getProfileByUsername(username: string) {
     createdAt: 0,
     updatedAt: 0,
   });
+
   if (!user) {
-    throw new ApiError("User not found with that username", 404);
+    throw new ApiError("User not found with that username or email", 404);
   }
+
   return user;
 }
 
