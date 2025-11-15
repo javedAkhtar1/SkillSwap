@@ -9,10 +9,10 @@ export const useGetProfileByUsername = (username: string) => {
   });
 };
 
-export const useFetchMessages = (conversationId: string) => {
+export const useFetchMessages = (conversationId: string, token: string) => {
   return useQuery({
     queryKey: ["messages", conversationId],
-    queryFn: () => fetchMessages(conversationId),
+    queryFn: () => fetchMessages(conversationId, token),
     enabled: !!conversationId,
   });
 }

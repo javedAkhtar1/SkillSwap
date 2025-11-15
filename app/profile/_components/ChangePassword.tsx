@@ -12,8 +12,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useChangePasswordMutation } from "@/tanstack-query/mutation";
+import { useAuth } from "@/context/authProvider";
 
 function ChangePassword() {
+  const {data} = useAuth()
+  const token = data?.accessToken || ""
+  console.log(token)
+  console.log(JSON.stringify(data, null, 2))
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -24,7 +29,7 @@ function ChangePassword() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const { mutate, isPending } = useChangePasswordMutation(() => {
+  const { mutate, isPending } = useChangePasswordMutation(token, () => {
     setIsSubmitted(true);
     setFormData({
       oldPassword: "",

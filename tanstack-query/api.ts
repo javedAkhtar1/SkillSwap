@@ -73,11 +73,16 @@ export const getProfileByUsername = async (query: string) => {
 export const changePassword = async (data: {
   oldPassword: string;
   newPassword: string;
-}) => {
+}, token: string) => {
   try {
     const response = await customAxios.post(
       `/api/user/change-password`,
       data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
     );
     return response.data;
   } catch (error) {
@@ -101,11 +106,16 @@ export const uploadImageToCloudinary = async (file: File) => {
   }
 };
 
-export const completeProfile = async (data: TCompleteProfileData) => {
+export const completeProfile = async (data: TCompleteProfileData, token: string) => {
   try {
     const response = await customAxios.post(
       `/api/user/complete-profile`,
       data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
     );
     return response.data;
   } catch (error) {
@@ -115,11 +125,17 @@ export const completeProfile = async (data: TCompleteProfileData) => {
 };
 
 export const fetchMessages = async (
-  conversationId: string
+  conversationId: string,
+  token: string,
 ): Promise<TMessagesResponse> => {
   try {
     const response = await customAxios.get(
       `/api/message?chat=${conversationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
     );
     console.log(response.data.data);
     return response.data.data;
@@ -129,11 +145,16 @@ export const fetchMessages = async (
   }
 };
 
-export const sendMessages = async (data: TMessageData) => {
+export const sendMessages = async (data: TMessageData, token: string) => {
   try {
     const response = await customAxios.post(
       `/api/message/send`,
       data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
     );
     return response.data;
   } catch (error) {

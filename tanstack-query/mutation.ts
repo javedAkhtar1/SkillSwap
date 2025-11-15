@@ -70,10 +70,10 @@ export const useVerifyEmailMutation = () => {
   });
 };
 
-export const useChangePasswordMutation = (onSuccessCallback?: () => void) => {
+export const useChangePasswordMutation = (token: string, onSuccessCallback?: () => void) => {
   return useMutation({
     mutationFn: (data: { oldPassword: string; newPassword: string }) =>
-      changePassword(data),
+      changePassword(data, token),
     onSuccess: () => {
       toast.success("Password changed successfully");
       if (onSuccessCallback) onSuccessCallback();
@@ -96,10 +96,10 @@ export const useUploadImage = () => {
   });
 };
 
-export const useCompleteProfile = () => {
+export const useCompleteProfile = (token: string) => {
   const router = useRouter();
   return useMutation({
-    mutationFn: (data: TCompleteProfileData) => completeProfile(data),
+    mutationFn: (data: TCompleteProfileData) => completeProfile(data, token),
     onSuccess: () => {
       toast.success("Profile completed successfully");
       router.push("/profile/me");
@@ -113,12 +113,13 @@ export const useCompleteProfile = () => {
 export const useSendMessage = (
   conversationId: string,
   senderId: string,
-  senderName: string
+  senderName: string,
+  token: string,
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: TMessageData) => sendMessages(data),
+    mutationFn: (data: TMessageData) => sendMessages(data, token),
 
     onMutate: async (variables) => {
       await queryClient.cancelQueries({

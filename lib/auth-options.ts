@@ -122,6 +122,7 @@ interface MyUser {
   id: string;
   username: string;
   email: string;
+  token: string;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -164,6 +165,8 @@ export const authOptions: NextAuthOptions = {
 
           // Backend returns user info directly
           const user = data.data?.user || data.user || data;
+          const customToken = data.data?.token || data.token;
+          user.customToken = customToken;
 
           if (!user || !user.id) {
             throw new Error("Invalid user data from API");
@@ -181,8 +184,38 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+    // async signIn({ user, account }) {
+    //   // Only run for Google sign in
+    //   if (account?.provider === "google") {
+    //     try {
+    //       const response = await customAxios.post(`/api/auth/google-login`, {
+    //         name: user.name,
+    //         email: user.email,
+    //         image: user.image,
+    //       });
+
+    //       const dbUser = response?.data?.user;
+
+    //       console.log(
+    //         dbUser, "DBUSER"
+    //       )
+    //       const customToken = response?.data?.user?.token;
+    //       console.log(customToken)
+    //       if (dbUser) {
+    //         user.id = dbUser._id;
+    //         user.username = dbUser.username;
+    //         user.email = dbUser.email;
+    //         user.image = dbUser.profilePicture || user.image;
+    //         user.accessToken = customToken
+    //       }
+    //     } catch (err) {
+    //       console.error("Failed to sync Google user:", err);
+    //     }
+    //   }
+    //   return true; // continue login flow
+    // },
+
     async signIn({ user, account }) {
-      // Only run for Google sign in
       if (account?.provider === "google") {
         try {
           const response = await customAxios.post(`/api/auth/google-login`, {
@@ -191,15 +224,25 @@ export const authOptions: NextAuthOptions = {
             image: user.image,
           });
 
-          const dbUser = response?.data?.user;
-          if (dbUser) {
-            user.id = dbUser._id;
-            user.username = dbUser.username;
-            user.email = dbUser.email;
-            user.image = dbUser.profilePicture || user.image;
+          const googleAuthResponse = response.data;
+
+          // The actual user object containing the token is inside data.user
+          const userWithToken = googleAuthResponse?.data?.user;
+
+          if (userWithToken) {
+            user.id = userWithToken.id || userWithToken._id; 
+            user.username = userWithToken.username;
+            user.email = userWithToken.email;
+            user.image = userWithToken.profilePicture || user.image;
+
+            user.accessToken = userWithToken.token;
+          } else {
+            console.error("Missing user or token in response from Express.");
+            return false; // Fail the login if the token/user is missing
           }
         } catch (err) {
-          console.error("Failed to sync Google user:", err);
+          console.error("Failed to sync Google user and fetch token:", err);
+          return false;
         }
       }
       return true; // continue login flow
@@ -208,16 +251,24 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.username = user.username;
+
+        const customToken = user.accessToken
+
+        if (customToken) {
+          token.accessToken = customToken;
+        }
       }
+
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        // session.user.id = token.id as string;
-        // session.user.username = token.username as string;
         session.user.id = token.id as string;
         session.user.username = token.username as string;
         session.user.email = token.email as string;
+      }
+      if (token.accessToken) {
+        session.accessToken = token.accessToken;
       }
       return session;
     },

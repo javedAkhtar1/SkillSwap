@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useFetchMessages } from "@/tanstack-query/query";
 import { TMessage } from "@/types/types";
 import { useSendMessage } from "@/tanstack-query/mutation";
+import { useAuth } from "@/context/authProvider";
 
 export default function useChat(conversationId: string, senderId: string, senderName: string) {
-  const { data, isLoading } = useFetchMessages(conversationId);
+  const {data: session} = useAuth()
+  const token = session?.accessToken || "";
+  const { data, isLoading } = useFetchMessages(conversationId, token);
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const {mutateAsync: sendMessageMutation, isPending: isSending} = useSendMessage(conversationId, senderId, senderName);
+  const {mutateAsync: sendMessageMutation, isPending: isSending} = useSendMessage(conversationId, senderId, senderName, token);
   const socketRef = useRef<any>(null);
 
   // load existing messages

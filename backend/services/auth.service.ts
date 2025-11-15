@@ -4,6 +4,9 @@ import User from "../models/user.model";
 import { ApiError } from "../lib/api-error";
 import cloudinary from "../lib/cloudinary";
 import axios from "axios"
+import jwt from "jsonwebtoken";
+
+const TOKEN_EXPIRY = "7d";
 
 const usernameRegex = /^[a-z0-9._]+$/;
 
@@ -104,7 +107,6 @@ export async function credentialLogin({
   email: string;
   password: string;
 }) {
-  await dbConnect();
 
   const user = await User.findOne({ email });
   if (!user) throw new ApiError("User not found", 404);
@@ -123,11 +125,25 @@ export async function credentialLogin({
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (!isValidPassword) throw new ApiError("Invalid password", 401);
 
+  const payload = {
+    id: user._id.toString(),
+    username: user.username,
+    email: user.email,
+  };
+
+  if (!process.env.NEXTAUTH_SECRET) {
+      throw new Error("NEXTAUTH_SECRET is not defined in environment variables");
+  }
+
+  const token = jwt.sign(payload, process.env.NEXTAUTH_SECRET!, {
+    expiresIn: TOKEN_EXPIRY,
+  });
   // Return only public info
   return {
     id: user._id.toString(),
     email: user.email,
     username: user.username,
+    token: token,
   };
 }
 
@@ -186,10 +202,25 @@ export async function oAuthLogin({
     });
   }
 
+  const payload = {
+    id: user._id.toString(),
+    username: user.username,
+    email: user.email,
+  };
+
+  if (!process.env.NEXTAUTH_SECRET) {
+      throw new Error("NEXTAUTH_SECRET is not defined in environment variables");
+  }
+
+  const token = jwt.sign(payload, process.env.NEXTAUTH_SECRET!, {
+    expiresIn: TOKEN_EXPIRY,
+  });
+
   return {
     id: user._id.toString(),
     email: user.email,
     username: user.username,
     profilePicture: user.profilePicture,
+    token: token,
   };
 }

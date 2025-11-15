@@ -27,6 +27,7 @@ import { completeProfileSchema } from "@/zod/schemas";
 import { Input } from "@/components/ui/input";
 import { useCompleteProfile, useUploadImage } from "@/tanstack-query/mutation";
 import toast from "react-hot-toast";
+import { useAuth } from "@/context/authProvider";
 
 const skills = [
   "Web Development",
@@ -49,9 +50,12 @@ const skills = [
 type CompleteProfileFormData = z.infer<typeof completeProfileSchema>;
 
 function CompleteProfilePage() {
+  const {data} = useAuth()
+  const token = data?.accessToken || "";
+  
   const { mutateAsync: saveImage, isPending: uploadPending } = useUploadImage();
   const { mutate: saveCompleteProfile, isPending: completePending } =
-    useCompleteProfile();
+    useCompleteProfile(token);
 
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
