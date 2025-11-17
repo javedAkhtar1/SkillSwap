@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LogOut, Menu, User, X } from "lucide-react";
+import { LogOut, Menu, UserIcon, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/authProvider"; 
 
@@ -157,22 +157,21 @@ export default Navbar;
 function ButtonsForLoggedInUsers() {
   const router = useRouter();
   return (
-    <div className="flex gap-3 font-poppins">
+    <div className="flex gap-3 font-poppins items-center">
       <Button
         variant="secondary"
         onClick={() => router.push(`/profile/me`)}
         className="cursor-pointer hover:bg-primary-btn-hover font-semibold py-1 px-3 text-sm transition-colors duration-200"
       >
-        Profile
-        <User />
+        <UserIcon />
       </Button>
       <Button
         variant="default"
         onClick={() => router.push("/logout")}
         className="cursor-pointer bg-primary-btn hover:bg-primary-btn-hover hover:text-black font-semibold py-1 px-3 text-sm transition-colors duration-200"
       >
-        Logout
         <LogOut />
+        Logout
       </Button>
     </div>
   );
