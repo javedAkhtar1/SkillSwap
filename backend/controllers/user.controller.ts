@@ -34,17 +34,10 @@ export async function getProfileController(req: Request, res: Response) {
 // -------------------- CHANGE PASSWORD --------------------
 export async function changePasswordController(req: Request, res: Response) {
   try {
-    // Convert Express req to Next.js-like object
-    const nextReq = {
-      headers: req.headers,
-      cookies: req.cookies, // if you use cookie-parser
-    };
-
     const user = (req as any).user;
     const email = user.email;
     // console.log("Session token:", token);
 
-  
     if (!email) throw new ApiError("Unauthorized", 401);
 
     const { oldPassword, newPassword } = req.body;
@@ -81,7 +74,7 @@ export async function changePasswordController(req: Request, res: Response) {
 export async function completeProfileController(req: Request, res: Response) {
   try {
     const user = (req as any).user;
-    console.log(user, "USERRRR")
+    console.log(user, "USERRRR");
     const email = user.email;
     // console.log("eMAIL", email)
 
@@ -107,4 +100,3 @@ export async function completeProfileController(req: Request, res: Response) {
     return errorResponse(res, "Something went wrong", 500);
   }
 }
-

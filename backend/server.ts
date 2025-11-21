@@ -30,7 +30,7 @@ async function main() {
   app.use(router);
 
   server.listen(process.env.PORT || 3001, () => {
-    console.log(`✅ Backend + Socket.IO running on http://localhost:${process.env.PORT || 3000}`);
+    console.log(`✅ Backend + Socket.IO running on http://localhost:${process.env.PORT || 3001}`);
   });
 }
 
