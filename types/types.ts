@@ -79,16 +79,17 @@ export type TPopulatedUser = {
   profilePicture: string;
 };
 
+export type TObjectId = string;
+
 export type TFriendRequestItem = {
   _id: string;
-  from: string;
-  to: TPopulatedUser;
+  from: TObjectId | TPopulatedUser;
+  to:   TObjectId | TPopulatedUser;
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
   updatedAt: string;
   __v: number;
 };
-
 export type TFriendRequestListData = {
   message: string;
   requests: TFriendRequestItem[] | [];

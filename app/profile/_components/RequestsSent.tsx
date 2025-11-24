@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useAuth } from "@/context/authProvider";
 import Link from "next/link";
+import { TPopulatedUser } from "@/types/types";
+
+// Type guard
+export function isPopulatedUser(value: unknown): value is TPopulatedUser {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "profilePicture" in value
+  );
+}
 
 // Utility to convert timestamps into "x hours ago"
 function timeAgo(timestamp: string): string {
@@ -33,11 +43,9 @@ function RequestsSent() {
   const { data: sessionData } = useAuth();
   const token = sessionData?.accessToken || "";
 
-  const { data, isLoading } = useGetPendingFriendRequestsSent(token);
-
+  const { data } = useGetPendingFriendRequestsSent(token);
   const requestsSent = data?.data?.requests || [];
 
-  if (isLoading) return <p className="p-4">Loading...</p>;
   if (!requestsSent.length)
     return <p className="p-4 text-gray-600">No pending requests sent.</p>;
 
@@ -50,18 +58,27 @@ function RequestsSent() {
         >
           {/* Left: Profile Image + Name */}
           <div className="flex items-center gap-3">
-            <Image
-              src={req.to.profilePicture}
-              alt={req.to.name}
-              width={45}
-              height={45}
-              className="rounded-md border"
-            />
+            {isPopulatedUser(req.to) && (
+              <Image
+                src={req.to.profilePicture}
+                alt={req.to.name}
+                width={45}
+                height={45}
+                className="rounded-md border"
+              />
+            )}
 
             <div>
-              <Link href={`/profile/${req.to.username}`}>
-                <p className="font-semibold hover:underline text-gray-900">{req.to.name}</p>
-              </Link>
+              {isPopulatedUser(req.to) ? (
+                <Link href={`/profile/${req.to.username}`}>
+                  <p className="font-semibold hover:underline text-gray-900">
+                    {req.to.name}
+                  </p>
+                </Link>
+              ) : (
+                <p className="font-semibold text-gray-900">Unknown User</p>
+              )}
+
               <p className="text-xs text-gray-500">{timeAgo(req.createdAt)}</p>
             </div>
           </div>

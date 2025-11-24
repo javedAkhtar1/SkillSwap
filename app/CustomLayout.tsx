@@ -4,10 +4,10 @@ import Navbar from "../components/shared/Navbar";
 import Footer from "../components/shared/Footer";
 import { usePathname } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/authProvider";
+import Loading from "@/components/shared/Loading";
 
 const hiddenRoutes = {
   nav: ["/login", "/signup", "/verify-email"],
@@ -32,11 +32,7 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
             <Suspense
               fallback={
                 <main className="min-h-screen flex items-center justify-center">
-                  <div className="w-full max-w-3xl space-y-4">
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-64 w-full" />
-                    <Skeleton className="h-12 w-1/2" />
-                  </div>
+                  <Loading /> 
                 </main>
               }
             >

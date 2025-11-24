@@ -165,8 +165,8 @@ export const authOptions: NextAuthOptions = {
 
           // Backend returns user info directly
           const user = data.data?.user || data.user || data;
-          const customToken = data.data?.token || data.token;
-          user.customToken = customToken;
+          const customToken = data.data?.token ||  data.data?.user?.token;
+          user.accessToken = customToken;
 
           if (!user || !user.id) {
             throw new Error("Invalid user data from API");

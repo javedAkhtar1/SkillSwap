@@ -14,6 +14,7 @@ import ChangePassword from "./ChangePassword";
 import EditProfile from "./EditProfile";
 import MyProfilePage from "./MyProfilePage";
 import RequestsSent from "./RequestsSent";
+import RequestsReceived from "./RequestsReceived";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -40,7 +41,7 @@ const Sidebar = () => {
     profile: <MyProfilePage />,
     messages: <div>Messages</div>,
     "requests-sent": <RequestsSent />,
-    "requests-received": <div>Requests Received</div>,
+    "requests-received": <RequestsReceived />,
     "edit-profile": <EditProfile />,
     "change-password": <ChangePassword />,
   };
