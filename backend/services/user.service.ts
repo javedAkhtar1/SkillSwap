@@ -14,7 +14,7 @@ export async function getProfile(query: string) {
     __v: 0,
     createdAt: 0,
     updatedAt: 0,
-  });
+  }).populate('friends', 'username email profilePicture');
 
   if (!user) {
     throw new ApiError("User not found with that username or email", 404);

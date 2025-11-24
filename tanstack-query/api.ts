@@ -1,7 +1,9 @@
 import axios from "axios";
 import {
   IUserSignup,
+  TApiQueryResponse,
   TCompleteProfileData,
+  TFriendRequestListData,
   TMessageData,
   TMessagesResponse,
 } from "@/types/types";
@@ -162,3 +164,37 @@ export const sendMessages = async (data: TMessageData, token: string) => {
     throw error;
   }
 };
+
+export const getPendingFriendRequestsSent = async (token: string): Promise<TApiQueryResponse<TFriendRequestListData>> => {
+  try {
+    const response = await customAxios.get(
+      `api/friend-request/pending/sent`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching pending friend requests sent:", error);
+    throw error;
+  }
+}
+
+export const getPendingFriendRequestsReceived = async (token: string): Promise<TApiQueryResponse<TFriendRequestListData>> => {
+  try {
+    const response = await customAxios.get(
+      `api/friend-request/pending/received`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching pending friend requests sent:", error);
+    throw error;
+  }
+}

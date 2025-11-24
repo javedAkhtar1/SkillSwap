@@ -74,14 +74,14 @@ export default class FriendsService {
     return await FriendRequest.find({
       to: userId,
       status: "pending",
-    }).populate("from", "name email profilePicture");
+    }).populate("from", "name username email profilePicture");
   }
 
   static async getPendingSent(userId: string) {
     return await FriendRequest.find({
       from: userId,
       status: "pending",
-    }).populate("to", "name email profilePicture");
+    }).populate("to", "name username email profilePicture");
   }
 
   static async unfriend(userId: string, friendId: string) {

@@ -68,19 +68,19 @@ function MyProfilePage() {
             <div className="bg-slate-100 p-3 md:p-4 rounded-lg self-center md:self-start mt-4 md:mt-0">
               <div className="flex gap-4 md:gap-6">
                 <div className="text-center">
-                  <div className="font-bold text-base md:text-lg">42</div>
+                  <div className="font-bold text-base md:text-lg">{profile.friends.length || 0}</div>
                   <div className="text-xs md:text-sm text-slate-600">
                     Connections
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-base md:text-lg">18</div>
+                  <div className="font-bold text-base md:text-lg">{profile.skillsToTeach.length || 0}</div>
                   <div className="text-xs md:text-sm text-slate-600">
                     Skills
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-base md:text-lg">7</div>
+                  <div className="font-bold text-base md:text-lg">{profile.skillsToLearn.length || 0}</div>
                   <div className="text-xs md:text-sm text-slate-600">
                     Learning
                   </div>

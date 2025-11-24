@@ -17,7 +17,7 @@ import { useAuth } from "@/context/authProvider";
 function ChangePassword() {
   const {data} = useAuth()
   const token = data?.accessToken || ""
-  console.log(token)
+  // console.log(token)
   // console.log(JSON.stringify(data, null, 2))
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);

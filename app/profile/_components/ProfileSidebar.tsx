@@ -13,6 +13,7 @@ import {
 import ChangePassword from "./ChangePassword";
 import EditProfile from "./EditProfile";
 import MyProfilePage from "./MyProfilePage";
+import RequestsSent from "./RequestsSent";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -38,7 +39,7 @@ const Sidebar = () => {
   const componentsMap: Record<string, React.ReactNode> = {
     profile: <MyProfilePage />,
     messages: <div>Messages</div>,
-    "requests-sent": <div>Requests Sent</div>,
+    "requests-sent": <RequestsSent />,
     "requests-received": <div>Requests Received</div>,
     "edit-profile": <EditProfile />,
     "change-password": <ChangePassword />,
