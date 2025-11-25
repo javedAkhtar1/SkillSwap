@@ -94,3 +94,4 @@ export type TFriendRequestListData = {
   message: string;
   requests: TFriendRequestItem[] | [];
 };
+

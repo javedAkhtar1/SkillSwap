@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useGetProfileByUsername } from "@/tanstack-query/query";
-import { TUserProfile } from "@/types/types";
 import Loading from "@/components/shared/Loading";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,7 @@ function MyProfilePage() {
   if (profileLoading) {
     return <Loading />;
   }
-  const profile: TUserProfile = {
+  const profile = {
     ...apiResponse?.data,
     skillsToTeach: apiResponse?.data?.skillsToTeach || [],
     skillsToLearn: apiResponse?.data?.skillsToLearn || [],
@@ -68,7 +67,7 @@ function MyProfilePage() {
             <div className="bg-slate-100 p-3 md:p-4 rounded-lg self-center md:self-start mt-4 md:mt-0">
               <div className="flex gap-4 md:gap-6">
                 <div className="text-center">
-                  <div className="font-bold text-base md:text-lg">{profile.friends.length || 0}</div>
+                  <div className="font-bold text-base md:text-lg">{profile.friends?.length || 0}</div>
                   <div className="text-xs md:text-sm text-slate-600">
                     Connections
                   </div>

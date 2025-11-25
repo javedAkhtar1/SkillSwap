@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  acceptFriendRequest,
   changePassword,
   completeProfile,
+  rejectFriendRequest,
   sendMessages,
+  unfriend,
   uploadImageToCloudinary,
   userLogin,
   userSignup,
@@ -180,3 +183,38 @@ export const useSendMessage = (
   });
 };
 
+export const useAcceptFriendRequest = (token: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (requestId: string) => acceptFriendRequest(requestId, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["friend-requests-received"],
+      });
+    },
+  });
+}
+
+export const useRejectFriendRequest = (token: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (requestId: string) => rejectFriendRequest(requestId, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["friend-requests-received"],
+      });
+    },
+  });
+}
+
+export const useUnfriend = (token: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (friendId: string) => unfriend(friendId, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
+    },
+  });
+}

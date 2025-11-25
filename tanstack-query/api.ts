@@ -6,6 +6,7 @@ import {
   TFriendRequestListData,
   TMessageData,
   TMessagesResponse,
+  TUserProfile,
 } from "@/types/types";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
@@ -60,7 +61,7 @@ export const verifyEmail = async (data: { email: string; otp: string }) => {
   }
 };
 
-export const getProfileByUsername = async (query: string) => {
+export const getProfileByUsername = async (query: string): Promise<TApiQueryResponse<TUserProfile>> => {
   try {
     const response = await customAxios.get(
       `/api/user/profile?q=${query}` // can be username or email
@@ -195,6 +196,59 @@ export const getPendingFriendRequestsReceived = async (token: string): Promise<T
     return response.data;
   } catch (error) {
     console.log("Error fetching pending friend requests sent:", error);
+    throw error;
+  }
+}
+
+export const acceptFriendRequest = async (requestId: string, token: string) => {
+  try {
+    const response = await customAxios.post(
+      `/api/friend-request/accept`,
+      { requestId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error accepting friend request:", error);
+    throw error;
+  }
+}
+export const rejectFriendRequest = async (requestId: string, token: string) => {
+  try {
+    const response = await customAxios.post(
+      `/api/friend-request/reject`,
+      { requestId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error rejecting friend request:", error);
+    throw error;
+  }
+}
+
+export const unfriend = async (friendId: string, token: string) => {
+  try {
+    const response = await customAxios.post(
+      `/api/friend-request/unfriend`,
+      { friendId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error rejecting friend request:", error);
     throw error;
   }
 }

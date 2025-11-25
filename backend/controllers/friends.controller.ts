@@ -94,7 +94,9 @@ export default class FriendsController {
 
   static async unfriend(req: Request, res: Response) {
     try {
-      const { userId, friendId } = req.body;
+      const user = (req as any).user;
+      const userId = user.id;
+      const { friendId } = req.body;
       const result = await FriendsService.unfriend(userId, friendId);
       return successResponse(res, { message: "Friend removed", result }, 200);
     } catch (error: any) {

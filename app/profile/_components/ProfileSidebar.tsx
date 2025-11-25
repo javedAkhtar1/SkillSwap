@@ -9,12 +9,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Edit2,
+  Users,
 } from "lucide-react";
 import ChangePassword from "./ChangePassword";
 import EditProfile from "./EditProfile";
 import MyProfilePage from "./MyProfilePage";
 import RequestsSent from "./RequestsSent";
 import RequestsReceived from "./RequestsReceived";
+import Friends from "./Friends";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -23,6 +25,7 @@ const Sidebar = () => {
   const menuItems = [
     { id: "profile", label: "Profile", icon: <User size={20} /> },
     { id: "messages", label: "Messages", icon: <MessageSquare size={20} /> },
+    { id: "friends", label: "Friends", icon: <Users size={20} /> },
     { id: "requests-sent", label: "Requests Sent", icon: <Send size={20} /> },
     {
       id: "requests-received",
@@ -40,6 +43,7 @@ const Sidebar = () => {
   const componentsMap: Record<string, React.ReactNode> = {
     profile: <MyProfilePage />,
     messages: <div>Messages</div>,
+    friends: <Friends />,
     "requests-sent": <RequestsSent />,
     "requests-received": <RequestsReceived />,
     "edit-profile": <EditProfile />,

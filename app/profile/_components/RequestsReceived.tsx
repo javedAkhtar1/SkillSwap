@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useAuth } from "@/context/authProvider";
 import Link from "next/link";
 import { TPopulatedUser } from "@/types/types";
+import { useAcceptFriendRequest, useRejectFriendRequest } from "@/tanstack-query/mutation";
 // Type guard
 export function isPopulatedUser(value: unknown): value is TPopulatedUser {
   return (
@@ -41,6 +42,8 @@ function timeAgo(timestamp: string): string {
 function RequestsReceived() {
   const { data: sessionData } = useAuth();
   const token = sessionData?.accessToken || "";
+  const {mutate: acceptFriend, isPending: isAccepting} = useAcceptFriendRequest(token);
+  const {mutate: rejectFriend, isPending: isRejecting} = useRejectFriendRequest(token);
 
   const { data } = useGetPendingFriendRequestsReceived(token);
   const requestsReceived = data?.data?.requests || [];
@@ -86,17 +89,19 @@ function RequestsReceived() {
           <div className="flex items-center gap-2">
             <Button
               className="py-2 bg-green-600 hover:bg-green-700 font-normal cursor-pointer"
-              onClick={() => console.log("Accept request:", req._id)}
+              disabled={isAccepting}
+              onClick={() => acceptFriend(req._id)}
             >
-              Accept
+              {isAccepting ? "Accepting..." : "Accept"}
             </Button>
 
             <Button
               variant="destructive"
+              disabled={isRejecting}
               className="py-2 font-normal cursor-pointer hover:bg-red-700"
-              onClick={() => console.log("Decline request:", req._id)}
+              onClick={() => rejectFriend(req._id)}
             >
-              Decline
+              {isRejecting ? "Declining..." : "Decline"}
             </Button>
           </div>
         </div>

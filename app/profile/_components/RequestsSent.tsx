@@ -8,7 +8,6 @@ import { useAuth } from "@/context/authProvider";
 import Link from "next/link";
 import { TPopulatedUser } from "@/types/types";
 
-// Type guard
 export function isPopulatedUser(value: unknown): value is TPopulatedUser {
   return (
     typeof value === "object" &&
@@ -17,7 +16,6 @@ export function isPopulatedUser(value: unknown): value is TPopulatedUser {
   );
 }
 
-// Utility to convert timestamps into "x hours ago"
 function timeAgo(timestamp: string): string {
   const diff = Date.now() - new Date(timestamp).getTime();
   const seconds = Math.floor(diff / 1000);
