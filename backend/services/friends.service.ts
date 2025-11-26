@@ -66,7 +66,7 @@ export default class FriendsService {
       status: "pending",
     });
 
-    if (!deleted) throw new Error("No pending request found.");
+    if (!deleted) throw new ApiError("No pending request found.", 404);
     return deleted;
   }
 

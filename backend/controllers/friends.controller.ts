@@ -50,7 +50,9 @@ export default class FriendsController {
 
   static async cancelRequest(req: Request, res: Response) {
     try {
-      const { from, to } = req.body;
+      const user = (req as any).user;
+      const from = user.id;
+      const { to } = req.body;
       const result = await FriendsService.cancelRequest(from, to);
       return successResponse(res, { message: "Friend request cancelled", deleted: result }, 200);
     } catch (error: any) {

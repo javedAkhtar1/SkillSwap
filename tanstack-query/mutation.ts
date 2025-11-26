@@ -6,6 +6,7 @@ import {
   rejectFriendRequest,
   sendMessages,
   unfriend,
+  unsendFriendRequest,
   uploadImageToCloudinary,
   userLogin,
   userSignup,
@@ -211,6 +212,18 @@ export const useUnfriend = (token: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (friendId: string) => unfriend(friendId, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
+    },
+  });
+}
+
+export const useUnsendFriendRequest = (token: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (friendId: string) => unsendFriendRequest(friendId, token),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["profile"],

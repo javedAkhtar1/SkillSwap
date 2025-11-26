@@ -7,12 +7,11 @@ import Image from "next/image";
 import { useAuth } from "@/context/authProvider";
 import Link from "next/link";
 import { TPopulatedUser } from "@/types/types";
+import { useUnsendFriendRequest } from "@/tanstack-query/mutation";
 
 export function isPopulatedUser(value: unknown): value is TPopulatedUser {
   return (
-    typeof value === "object" &&
-    value !== null &&
-    "profilePicture" in value
+    typeof value === "object" && value !== null && "profilePicture" in value
   );
 }
 
@@ -42,6 +41,7 @@ function RequestsSent() {
   const token = sessionData?.accessToken || "";
 
   const { data } = useGetPendingFriendRequestsSent(token);
+  const { mutate, isPending } = useUnsendFriendRequest(token);
   const requestsSent = data?.data?.requests || [];
 
   if (!requestsSent.length)
@@ -84,10 +84,14 @@ function RequestsSent() {
           {/* Right: Unsend Button */}
           <Button
             variant="destructive"
+            disabled={isPending}
             className="py-2 font-normal cursor-pointer hover:bg-red-700"
-            onClick={() => console.log("Unsend request:", req._id)}
+            onClick={() =>
+              !isPending &&
+              mutate(typeof req.to === "string" ? req.to : req.to._id)
+            }
           >
-            Unsend
+            {isPending ? "Cancelling..." : "Unsend Request"}
           </Button>
         </div>
       ))}

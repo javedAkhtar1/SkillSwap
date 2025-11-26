@@ -252,3 +252,21 @@ export const unfriend = async (friendId: string, token: string) => {
     throw error;
   }
 }
+
+export const unsendFriendRequest = async (to: string, token: string) => {
+  try {
+    const response = await customAxios.post(
+      `/api/friend-request/cancel`,
+      { to },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error rejecting friend request:", error);
+    throw error;
+  }
+}
