@@ -11,7 +11,6 @@ export const uploadImageController = async (req: Request, res: Response) => {
       return errorResponse(res, "No file provided", 400);
     }
 
-    // file.buffer contains the raw data
     const imageUrl = await uploadImage(file);
 
     return successResponse(res, { imageUrl }, 201);

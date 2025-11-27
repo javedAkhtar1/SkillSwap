@@ -108,7 +108,8 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      <div className="flex-1 p-4 md:p-8 w-full overflow-hidden">
+      <div className="flex-1 p-4 md:p-8 w-full overflow-y-auto min-h-0">
+
         <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">
           {menuItems.find((item) => item.id === activeItem)?.label ||
             "Dashboard"}

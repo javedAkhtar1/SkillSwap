@@ -24,7 +24,7 @@ function MyProfilePage() {
     skillsToTeach: apiResponse?.data?.skillsToTeach || [],
     skillsToLearn: apiResponse?.data?.skillsToLearn || [],
   };
-  console.log(profile.profilePicture)
+  // console.log(profile.profilePicture)
   
   return (
     <div className="w-full h-auto lg:max-w-7xl max-w-4xl mx-auto">

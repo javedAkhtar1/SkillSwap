@@ -45,7 +45,7 @@ function RequestsSent() {
   const requestsSent = data?.data?.requests || [];
 
   if (!requestsSent.length)
-    return <p className="p-4 text-gray-600">No pending requests sent.</p>;
+    return <p className="p-4 text-gray-600 text-center">No pending requests sent.</p>;
 
   return (
     <div className="space-y-4 p-4">

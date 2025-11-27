@@ -95,3 +95,32 @@ export type TFriendRequestListData = {
   requests: TFriendRequestItem[] | [];
 };
 
+export const skills = [
+  "Web Development",
+  "Graphic Design",
+  "Guitar",
+  "Cooking",
+  "English",
+  "Chess",
+  "Yoga",
+  "Video Editing",
+  "Photography",
+  "App Development",
+  "UI/UX Design",
+  "Drawing",
+  "Singing",
+  "Dancing",
+  "Hindi",
+] as const;
+
+export type TSkill = (typeof skills)[number];
+
+export type TUpdateProfilePayload = {
+  name?: string;
+  username?: string;
+  age?: number;
+  bio?: string;
+  profilePicture?: string;
+  skillsToTeach?: TSkill[];
+  skillsToLearn?: TSkill[];
+};

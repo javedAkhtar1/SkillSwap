@@ -6,6 +6,7 @@ import {
   TFriendRequestListData,
   TMessageData,
   TMessagesResponse,
+  TUpdateProfilePayload,
   TUserProfile,
 } from "@/types/types";
 import { signIn } from "next-auth/react";
@@ -267,6 +268,24 @@ export const unsendFriendRequest = async (to: string, token: string) => {
     return response.data;
   } catch (error) {
     console.log("Error rejecting friend request:", error);
+    throw error;
+  }
+}
+
+export const editProfile = async (data: TUpdateProfilePayload, token: string) => {
+  try {
+    const response = await customAxios.patch(
+      `/api/user/edit-profile`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error updating profile:", error);
     throw error;
   }
 }

@@ -2,6 +2,7 @@ import { ApiError } from "../lib/api-error";
 import dbConnect from "../lib/dbConnect";
 import User from "../models/user.model";
 import bcrypt from "bcryptjs";
+import { skills, TSkill, TUpdateProfilePayload } from "../types/types";
 
 export async function getProfile(query: string) {
   // Try username first, then email
@@ -54,7 +55,6 @@ export async function completeProfile(
   skillsToTeach: string[],
   email: string
 ) {
-  await dbConnect();
 
   const updatedUser = await User.findOneAndUpdate(
     { email },
@@ -80,3 +80,35 @@ export async function completeProfile(
   return updatedUser.toObject();
 }
 
+export async function updateProfile(userId: string, updates: TUpdateProfilePayload) {
+    
+    if (updates.skillsToTeach) {
+      updates.skillsToTeach = updates.skillsToTeach.filter((s) =>
+        skills.includes(s)
+      ) as TSkill[];
+    }
+
+    if (updates.skillsToLearn) {
+      updates.skillsToLearn = updates.skillsToLearn.filter((s) =>
+        skills.includes(s)
+      ) as TSkill[];
+    }
+
+    // Handle unique username check
+    if (updates.username) {
+      const exists = await User.findOne({ username: updates.username });
+      if (exists && exists._id.toString() !== userId) {
+        throw new ApiError("Username already taken", 400);
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      { new: true }
+    ).select("-password -otp -otpExpiry"); // Hide sensitive fields
+
+    if (!updatedUser) throw new ApiError("User not found", 404);
+
+    return updatedUser;
+  }

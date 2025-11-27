@@ -28,24 +28,7 @@ import { Input } from "@/components/ui/input";
 import { useCompleteProfile, useUploadImage } from "@/tanstack-query/mutation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/authProvider";
-
-const skills = [
-  "Web Development",
-  "Graphic Design",
-  "Guitar",
-  "Cooking",
-  "English",
-  "Chess",
-  "Yoga",
-  "Video Editing",
-  "Photography",
-  "App Development",
-  "UI/UX Design",
-  "Drawing",
-  "Singing",
-  "Dancing",
-  "Hindi",
-];
+import { skills } from "@/constants/skills";
 
 type CompleteProfileFormData = z.infer<typeof completeProfileSchema>;
 

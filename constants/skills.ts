@@ -1,0 +1,17 @@
+export const skills = [
+  "Web Development",
+  "Graphic Design",
+  "Guitar",
+  "Cooking",
+  "English",
+  "Chess",
+  "Yoga",
+  "Video Editing",
+  "Photography",
+  "App Development",
+  "UI/UX Design",
+  "Drawing",
+  "Singing",
+  "Dancing",
+  "Hindi",
+];

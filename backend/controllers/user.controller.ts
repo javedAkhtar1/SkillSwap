@@ -1,9 +1,11 @@
 import { ApiError } from "../lib/api-error";
 import { errorResponse, successResponse } from "../lib/api-response";
+import { uploadImage } from "../services/image-upload.service";
 import {
   completeProfile,
   changePassword,
   getProfile,
+  updateProfile,
 } from "../services/user.service";
 import { Request, Response } from "express";
 
@@ -74,7 +76,7 @@ export async function changePasswordController(req: Request, res: Response) {
 export async function completeProfileController(req: Request, res: Response) {
   try {
     const user = (req as any).user;
-    console.log(user, "USERRRR");
+    // console.log(user, "USERRRR");
     const email = user.email;
     // console.log("eMAIL", email)
 
@@ -92,6 +94,31 @@ export async function completeProfileController(req: Request, res: Response) {
     );
 
     return successResponse(res, result, 200);
+  } catch (error: any) {
+    if (error instanceof ApiError) {
+      return errorResponse(res, error.message, error.status);
+    }
+    console.error("Unexpected error:", error);
+    return errorResponse(res, "Something went wrong", 500);
+  }
+}
+
+export async function updateProfileController(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user.id;
+    const updates = req.body;
+    const file = req.file;
+
+    // If profile picture is uploaded, upload to Cloudinary
+    if (file) {
+      const imageUrl = await uploadImage(file);
+      updates.profilePicture = imageUrl; // attach new image
+    }
+
+    const updatedProfile = await updateProfile(userId, updates);
+
+    return successResponse(res, updatedProfile, 200);
+
   } catch (error: any) {
     if (error instanceof ApiError) {
       return errorResponse(res, error.message, error.status);

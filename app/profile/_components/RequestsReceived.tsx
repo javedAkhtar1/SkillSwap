@@ -49,7 +49,7 @@ function RequestsReceived() {
   const requestsReceived = data?.data?.requests || [];
 
   if (!requestsReceived.length)
-    return <p className="p-4 text-gray-600">No pending requests received.</p>;
+    return <p className="p-4 text-gray-600 text-center">No pending requests received.</p>;
 
   return (
     <div className="space-y-4 p-4">

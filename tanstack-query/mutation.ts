@@ -3,6 +3,7 @@ import {
   acceptFriendRequest,
   changePassword,
   completeProfile,
+  editProfile,
   rejectFriendRequest,
   sendMessages,
   unfriend,
@@ -19,6 +20,7 @@ import {
   TMessage,
   TMessageData,
   TMessagesResponse,
+  TUpdateProfilePayload,
 } from "@/types/types";
 
 export const useSignUpMutation = () => {
@@ -224,6 +226,18 @@ export const useUnsendFriendRequest = (token: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (friendId: string) => unsendFriendRequest(friendId, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
+    },
+  });
+}
+
+export const useEditProfile = (token: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: TUpdateProfilePayload) => editProfile(data, token),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["profile"],
