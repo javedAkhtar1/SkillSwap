@@ -8,14 +8,16 @@ export async function getProfile(query: string) {
   // Try username first, then email
   const user = await User.findOne({
     $or: [{ username: query }, { email: query }],
-  }).select({
-    password: 0,
-    otp: 0,
-    otpExpiry: 0,
-    __v: 0,
-    createdAt: 0,
-    updatedAt: 0,
-  }).populate('friends', 'username email profilePicture');
+  })
+    .select({
+      password: 0,
+      otp: 0,
+      otpExpiry: 0,
+      __v: 0,
+      createdAt: 0,
+      updatedAt: 0,
+    })
+    .populate("friends", "username email profilePicture");
 
   if (!user) {
     throw new ApiError("User not found with that username or email", 404);
@@ -55,7 +57,6 @@ export async function completeProfile(
   skillsToTeach: string[],
   email: string
 ) {
-
   const updatedUser = await User.findOneAndUpdate(
     { email },
     {
@@ -80,35 +81,57 @@ export async function completeProfile(
   return updatedUser.toObject();
 }
 
-export async function updateProfile(userId: string, updates: TUpdateProfilePayload) {
-    
-    if (updates.skillsToTeach) {
-      updates.skillsToTeach = updates.skillsToTeach.filter((s) =>
-        skills.includes(s)
-      ) as TSkill[];
-    }
-
-    if (updates.skillsToLearn) {
-      updates.skillsToLearn = updates.skillsToLearn.filter((s) =>
-        skills.includes(s)
-      ) as TSkill[];
-    }
-
-    // Handle unique username check
-    if (updates.username) {
-      const exists = await User.findOne({ username: updates.username });
-      if (exists && exists._id.toString() !== userId) {
-        throw new ApiError("Username already taken", 400);
-      }
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $set: updates },
-      { new: true }
-    ).select("-password -otp -otpExpiry"); // Hide sensitive fields
-
-    if (!updatedUser) throw new ApiError("User not found", 404);
-
-    return updatedUser;
+export async function updateProfile(
+  userId: string,
+  updates: TUpdateProfilePayload
+) {
+  if (updates.skillsToTeach) {
+    updates.skillsToTeach = updates.skillsToTeach.filter((s) =>
+      skills.includes(s)
+    ) as TSkill[];
   }
+
+  if (updates.skillsToLearn) {
+    updates.skillsToLearn = updates.skillsToLearn.filter((s) =>
+      skills.includes(s)
+    ) as TSkill[];
+  }
+
+  // Handle unique username check
+  if (updates.username) {
+    const exists = await User.findOne({ username: updates.username });
+    if (exists && exists._id.toString() !== userId) {
+      throw new ApiError("Username already taken", 400);
+    }
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $set: updates },
+    { new: true }
+  ).select("-password -otp -otpExpiry"); // Hide sensitive fields
+
+  if (!updatedUser) throw new ApiError("User not found", 404);
+
+  return updatedUser;
+}
+
+export async function getAllUsers(page: number = 1, limit: number = 12) {
+  const skip = (page - 1) * limit;
+  const query = { profileComplete: true };
+
+  const users = await User.find(query)
+    .select("-password -otp -otpExpiry -__v -createdAt -updatedAt")
+    .skip(skip)
+    .limit(limit);
+
+  const total = await User.countDocuments(query);
+
+  return {
+    users,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+}

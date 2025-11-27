@@ -2,6 +2,7 @@ import express from "express";
 import {
   changePasswordController,
   completeProfileController,
+  getAllUsersController,
   getProfileController,
   updateProfileController,
 } from "../controllers/user.controller";
@@ -20,6 +21,8 @@ userRouter.patch(
   upload.single("profilePicture"), // <– ACCEPT file
   updateProfileController
 );
+
+userRouter.get("/all", getAllUsersController);
 
 
 // image router for user profile image upload

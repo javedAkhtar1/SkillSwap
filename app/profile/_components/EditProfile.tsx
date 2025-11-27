@@ -36,7 +36,7 @@ function EditProfile() {
   const [imagePreview, setImagePreview] = useState<string | undefined>(profile?.profilePicture);
   const [file, setFile] = useState<File | null>(null);
 
-  // ❗ Only now we may return conditionally
+  //  Only now we may return conditionally
   if (isLoading) return <Loading />;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>

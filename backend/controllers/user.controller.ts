@@ -6,6 +6,7 @@ import {
   changePassword,
   getProfile,
   updateProfile,
+  getAllUsers,
 } from "../services/user.service";
 import { Request, Response } from "express";
 
@@ -127,3 +128,16 @@ export async function updateProfileController(req: Request, res: Response) {
     return errorResponse(res, "Something went wrong", 500);
   }
 }
+
+export const getAllUsersController = async (req: Request, res: Response) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 12;
+
+    const data = await getAllUsers(page, limit);
+    return successResponse(res, data);
+  } catch (error: any) {
+    console.error("Get all users error:", error);
+    return errorResponse(res, "Failed to fetch users", 500);
+  }
+};
