@@ -133,9 +133,11 @@ export const getAllUsersController = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 12;
+    const search = (req.query.search as string) || ""; 
 
-    const data = await getAllUsers(page, limit);
+    const data = await getAllUsers(page, limit, search);
     return successResponse(res, data);
+
   } catch (error: any) {
     console.error("Get all users error:", error);
     return errorResponse(res, "Failed to fetch users", 500);

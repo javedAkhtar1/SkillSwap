@@ -116,16 +116,26 @@ export async function updateProfile(
   return updatedUser;
 }
 
-export async function getAllUsers(page: number = 1, limit: number = 12) {
+export async function getAllUsers(page: number = 1, limit: number = 12, search = "") {
   const skip = (page - 1) * limit;
-  const query = { profileComplete: true };
 
-  const users = await User.find(query)
+  const filter: any = { profileComplete: true };
+
+  if (search.trim()) {
+    filter.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { username: { $regex: search, $options: "i" } },
+      { skillsToTeach: { $regex: search, $options: "i" } },
+      { skillsToLearn: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const users = await User.find(filter)
     .select("-password -otp -otpExpiry -__v -createdAt -updatedAt")
     .skip(skip)
     .limit(limit);
 
-  const total = await User.countDocuments(query);
+  const total = await User.countDocuments(filter);
 
   return {
     users,
@@ -135,3 +145,4 @@ export async function getAllUsers(page: number = 1, limit: number = 12) {
     totalPages: Math.ceil(total / limit),
   };
 }
+

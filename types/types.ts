@@ -124,3 +124,28 @@ export type TUpdateProfilePayload = {
   skillsToTeach?: TSkill[];
   skillsToLearn?: TSkill[];
 };
+
+export type TUser = {
+  _id: string;
+  name: string;
+  username: string;
+  email: string;
+  profilePicture: string;
+  age: number;
+  bio: string;
+  skillsToTeach: string[];
+  skillsToLearn: string[];
+  profileComplete: boolean;
+  provider: "credentials" | "google";
+  isEmailVerified: boolean;
+  isActive: boolean;
+  friends: string[] | [];
+};
+
+export type TAllUsersData = {
+  users: TUser[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};

@@ -1,6 +1,7 @@
 import axios from "axios";
 import {
   IUserSignup,
+  TAllUsersData,
   TApiQueryResponse,
   TCompleteProfileData,
   TFriendRequestListData,
@@ -16,10 +17,7 @@ import customAxios from "@/lib/axios-interceptor";
 
 export const userSignup = async (data: IUserSignup) => {
   try {
-    const response = await customAxios.post(
-      `/api/auth/signup`,
-      data
-    );
+    const response = await customAxios.post(`/api/auth/signup`, data);
     return response.data;
   } catch (error) {
     console.log("Error signing up user:", error);
@@ -51,10 +49,7 @@ export const userLogin = async (
 
 export const verifyEmail = async (data: { email: string; otp: string }) => {
   try {
-    const response = await customAxios.post(
-      `/api/auth/verify-email`,
-      data
-    );
+    const response = await customAxios.post(`/api/auth/verify-email`, data);
     return response.data;
   } catch (error) {
     console.log("Error verifying email:", error);
@@ -62,7 +57,9 @@ export const verifyEmail = async (data: { email: string; otp: string }) => {
   }
 };
 
-export const getProfileByUsername = async (query: string): Promise<TApiQueryResponse<TUserProfile>> => {
+export const getProfileByUsername = async (
+  query: string
+): Promise<TApiQueryResponse<TUserProfile>> => {
   try {
     const response = await customAxios.get(
       `/api/user/profile?q=${query}` // can be username or email
@@ -74,20 +71,19 @@ export const getProfileByUsername = async (query: string): Promise<TApiQueryResp
   }
 };
 
-export const changePassword = async (data: {
-  oldPassword: string;
-  newPassword: string;
-}, token: string) => {
+export const changePassword = async (
+  data: {
+    oldPassword: string;
+    newPassword: string;
+  },
+  token: string
+) => {
   try {
-    const response = await customAxios.post(
-      `/api/user/change-password`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      }
-    );
+    const response = await customAxios.post(`/api/user/change-password`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.log("Error changing password:", error);
@@ -99,10 +95,7 @@ export const uploadImageToCloudinary = async (file: File) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await customAxios.post(
-      `/api/upload`,
-      formData
-    );
+    const response = await customAxios.post(`/api/upload`, formData);
     return response.data;
   } catch (error) {
     console.log("Error uploading image:", error);
@@ -110,7 +103,10 @@ export const uploadImageToCloudinary = async (file: File) => {
   }
 };
 
-export const completeProfile = async (data: TCompleteProfileData, token: string) => {
+export const completeProfile = async (
+  data: TCompleteProfileData,
+  token: string
+) => {
   try {
     const response = await customAxios.post(
       `/api/user/complete-profile`,
@@ -118,7 +114,7 @@ export const completeProfile = async (data: TCompleteProfileData, token: string)
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
     );
     return response.data;
@@ -130,7 +126,7 @@ export const completeProfile = async (data: TCompleteProfileData, token: string)
 
 export const fetchMessages = async (
   conversationId: string,
-  token: string,
+  token: string
 ): Promise<TMessagesResponse> => {
   try {
     const response = await customAxios.get(
@@ -138,7 +134,7 @@ export const fetchMessages = async (
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
     );
     console.log(response.data.data);
@@ -151,15 +147,11 @@ export const fetchMessages = async (
 
 export const sendMessages = async (data: TMessageData, token: string) => {
   try {
-    const response = await customAxios.post(
-      `/api/message/send`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      }
-    );
+    const response = await customAxios.post(`/api/message/send`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.log("Error sending message:", error);
@@ -167,31 +159,32 @@ export const sendMessages = async (data: TMessageData, token: string) => {
   }
 };
 
-export const getPendingFriendRequestsSent = async (token: string): Promise<TApiQueryResponse<TFriendRequestListData>> => {
+export const getPendingFriendRequestsSent = async (
+  token: string
+): Promise<TApiQueryResponse<TFriendRequestListData>> => {
   try {
-    const response = await customAxios.get(
-      `api/friend-request/pending/sent`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      }
-    );
+    const response = await customAxios.get(`api/friend-request/pending/sent`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.log("Error fetching pending friend requests sent:", error);
     throw error;
   }
-}
+};
 
-export const getPendingFriendRequestsReceived = async (token: string): Promise<TApiQueryResponse<TFriendRequestListData>> => {
+export const getPendingFriendRequestsReceived = async (
+  token: string
+): Promise<TApiQueryResponse<TFriendRequestListData>> => {
   try {
     const response = await customAxios.get(
       `api/friend-request/pending/received`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
     );
     return response.data;
@@ -199,7 +192,7 @@ export const getPendingFriendRequestsReceived = async (token: string): Promise<T
     console.log("Error fetching pending friend requests sent:", error);
     throw error;
   }
-}
+};
 
 export const acceptFriendRequest = async (requestId: string, token: string) => {
   try {
@@ -209,7 +202,7 @@ export const acceptFriendRequest = async (requestId: string, token: string) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
     );
     return response.data;
@@ -217,7 +210,7 @@ export const acceptFriendRequest = async (requestId: string, token: string) => {
     console.log("Error accepting friend request:", error);
     throw error;
   }
-}
+};
 export const rejectFriendRequest = async (requestId: string, token: string) => {
   try {
     const response = await customAxios.post(
@@ -226,7 +219,7 @@ export const rejectFriendRequest = async (requestId: string, token: string) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
     );
     return response.data;
@@ -234,7 +227,7 @@ export const rejectFriendRequest = async (requestId: string, token: string) => {
     console.log("Error rejecting friend request:", error);
     throw error;
   }
-}
+};
 
 export const unfriend = async (friendId: string, token: string) => {
   try {
@@ -244,7 +237,7 @@ export const unfriend = async (friendId: string, token: string) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
     );
     return response.data;
@@ -252,7 +245,7 @@ export const unfriend = async (friendId: string, token: string) => {
     console.log("Error rejecting friend request:", error);
     throw error;
   }
-}
+};
 
 export const unsendFriendRequest = async (to: string, token: string) => {
   try {
@@ -262,7 +255,7 @@ export const unsendFriendRequest = async (to: string, token: string) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       }
     );
     return response.data;
@@ -270,22 +263,33 @@ export const unsendFriendRequest = async (to: string, token: string) => {
     console.log("Error rejecting friend request:", error);
     throw error;
   }
-}
+};
 
-export const editProfile = async (data: TUpdateProfilePayload, token: string) => {
+export const editProfile = async (
+  data: TUpdateProfilePayload,
+  token: string
+) => {
   try {
-    const response = await customAxios.patch(
-      `/api/user/edit-profile`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      }
-    );
+    const response = await customAxios.patch(`/api/user/edit-profile`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.log("Error updating profile:", error);
     throw error;
   }
-}
+};
+
+export const getAllUsers = async (page: number = 1, limit: number = 12, search?: string): Promise<TApiQueryResponse<TAllUsersData>> => {
+  try {
+    const response = await customAxios.get(
+      `/api/user/all?page=${page}&limit=${limit}` + (search ? `&search=${encodeURIComponent(search)}` : "")
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching all users:", error);
+    throw error;
+  }
+};
