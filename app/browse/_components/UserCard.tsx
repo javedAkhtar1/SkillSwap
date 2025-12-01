@@ -17,8 +17,8 @@ export default function UserCard({ user }: { user: TUser }) {
         <p className="text-gray-600 text-sm text-center">{user.bio}</p>
 
         <div className="flex flex-wrap gap-1 text-xs mt-2">
-          {user.skillsToTeach.slice(0, 3).map((s: string) => (
-            <span key={s} className="bg-blue-600 text-white px-2 py-1 rounded-full">
+          {user.skillsToTeach.slice(0, 3).map((s: string, i: number) => (
+            <span key={i} className="bg-blue-600 text-white px-2 py-1 rounded-full">
               {s}
             </span>
           ))}

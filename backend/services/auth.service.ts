@@ -82,7 +82,7 @@ export async function verifyEmail({
     throw new ApiError("Email already verified", 400);
   }
 
-  if (!user.otp || !user.otpExpiry) {
+  if (!user.otp) {
     throw new ApiError("No OTP generated", 400);
   }
 

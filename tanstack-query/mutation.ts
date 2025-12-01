@@ -5,6 +5,7 @@ import {
   completeProfile,
   editProfile,
   rejectFriendRequest,
+  sendFriendRequest,
   sendMessages,
   unfriend,
   unsendFriendRequest,
@@ -186,11 +187,25 @@ export const useSendMessage = (
   });
 };
 
+export const useSendFriendRequest = (token: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (to: string) => sendFriendRequest(to, token),
+    onSuccess: () => {
+      toast.success("Friend request sent");
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
+    },
+  });
+}
+
 export const useAcceptFriendRequest = (token: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (requestId: string) => acceptFriendRequest(requestId, token),
     onSuccess: () => {
+      toast.success("Friend request accepted");
       queryClient.invalidateQueries({
         queryKey: ["friend-requests-received"],
       });
@@ -203,6 +218,7 @@ export const useRejectFriendRequest = (token: string) => {
   return useMutation({
     mutationFn: (requestId: string) => rejectFriendRequest(requestId, token),
     onSuccess: () => {
+      toast.success("Friend request rejected");
       queryClient.invalidateQueries({
         queryKey: ["friend-requests-received"],
       });
@@ -227,6 +243,7 @@ export const useUnsendFriendRequest = (token: string) => {
   return useMutation({
     mutationFn: (friendId: string) => unsendFriendRequest(friendId, token),
     onSuccess: () => {
+      toast.success("Friend request unsent");
       queryClient.invalidateQueries({
         queryKey: ["profile"],
       });
@@ -239,6 +256,7 @@ export const useEditProfile = (token: string) => {
   return useMutation({
     mutationFn: (data: TUpdateProfilePayload) => editProfile(data, token),
     onSuccess: () => {
+      toast.success("Profile updated");
       queryClient.invalidateQueries({
         queryKey: ["profile"],
       });

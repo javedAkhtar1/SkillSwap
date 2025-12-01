@@ -194,6 +194,24 @@ export const getPendingFriendRequestsReceived = async (
   }
 };
 
+export const sendFriendRequest = async (to: string, token: string) => {
+ try {
+    const response = await customAxios.post(
+      `/api/friend-request/send`,
+      { to },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error sending friend request:", error);
+    throw error;
+  }
+}
+
 export const acceptFriendRequest = async (requestId: string, token: string) => {
   try {
     const response = await customAxios.post(

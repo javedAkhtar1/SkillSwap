@@ -5,33 +5,47 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, UserPlus } from "lucide-react";
+import { Check, MessageCircle, UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useGetProfileByUsername } from "@/tanstack-query/query";
 import Loading from "@/components/shared/Loading";
+import { useAuth } from "@/context/authProvider";
+import { useSendFriendRequest } from "@/tanstack-query/mutation";
 
 function OthersProfilePage() {
   const { username } = useParams();
+  const { data: sessionData } = useAuth();
+  const token = sessionData?.accessToken || "";
+  const { mutate, isPending } = useSendFriendRequest(token);
+
   const { data: apiResponse, isLoading: profileLoading } =
     useGetProfileByUsername(username as string);
 
-    if (profileLoading) return <Loading />;
+  if (profileLoading) return <Loading />;
 
   if (!apiResponse || !apiResponse.data) {
     return <p className="p-4 text-center text-gray-500">Profile not found.</p>;
   }
 
   const profile = apiResponse.data;
+  const isFriend = profile.friends.some(
+    (friend) => friend._id === sessionData?.user.id
+  );
+
+  function handleSendRequest() {
+    mutate(profile._id);
+  }
 
   return (
-    <div className="w-full h-auto lg:max-w-7xl max-w-4xl mx-auto">
+    <div className="w-full h-auto lg:max-w-7xl max-w-4xl mx-auto mt-4 p-4">
       <Card className="shadow-lg">
         <CardHeader className="pb-4">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             <div className="flex flex-col md:flex-row items-center gap-6 flex-1">
               <Avatar className="h-28 w-28 md:h-32 md:w-32 border-4 border-white shadow-md">
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
+                  // src="https://github.com/shadcn.png"
+                  src={profile.profilePicture}
                   alt="Profile"
                 />
                 <AvatarFallback className="text-2xl">
@@ -45,10 +59,21 @@ function OthersProfilePage() {
                 </CardTitle>
                 <p className="text-slate-600 mt-2">@{profile.username}</p>
                 <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
-                  <Button className="gap-2 bg-primary-btn hover:bg-primary-btn-hover hover:text-black text-sm h-9 hover:cursor-pointer">
+                  {isFriend ? (
+
+                    <Badge className="bg-green-700 text-white px-4 text-sm">
+                      <Check size={16} className="inline mr-1" />
+                      Friend</Badge>
+                  ): (
+                  <Button
+                    className="gap-2 bg-primary-btn hover:bg-primary-btn-hover hover:text-black text-sm h-9 hover:cursor-pointer"
+                    onClick={handleSendRequest}
+                    disabled={isPending}
+                  >
                     <UserPlus size={16} />
-                    Send Request
+                    {isPending ? "Sending..." : "Send Request"}
                   </Button>
+                )}
                   <Button
                     variant="outline"
                     className="gap-2 text-sm h-9 bg-secondary-btn hover:cursor-pointer"
@@ -63,19 +88,25 @@ function OthersProfilePage() {
             <div className="bg-slate-100 p-3 md:p-4 rounded-lg self-center md:self-start mt-4 md:mt-0">
               <div className="flex gap-4 md:gap-6">
                 <div className="text-center">
-                  <div className="font-bold text-base md:text-lg">42</div>
+                  <div className="font-bold text-base md:text-lg">
+                    {profile.friends.length || 0}
+                  </div>
                   <div className="text-xs md:text-sm text-slate-600">
                     Connections
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-base md:text-lg">18</div>
+                  <div className="font-bold text-base md:text-lg">
+                    {profile.skillsToTeach.length || 0}
+                  </div>
                   <div className="text-xs md:text-sm text-slate-600">
                     Skills
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-base md:text-lg">7</div>
+                  <div className="font-bold text-base md:text-lg">
+                    {profile.skillsToLearn.length || 0}
+                  </div>
                   <div className="text-xs md:text-sm text-slate-600">
                     Learning
                   </div>
@@ -103,24 +134,11 @@ function OthersProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary" className="text-sm">
-                      React
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      TypeScript
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      UI/UX Design
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      Figma
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      CSS Animations
-                    </Badge>
-                    <Badge variant="secondary" className="text-sm">
-                      Next.js
-                    </Badge>
+                    {profile.skillsToTeach.map((s, i) => (
+                      <Badge key={i} variant="secondary" className="text-sm">
+                        {s}
+                      </Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -135,21 +153,11 @@ function OthersProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="text-sm">
-                      Three.js
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      GraphQL
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      AWS
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      Machine Learning
-                    </Badge>
-                    <Badge variant="outline" className="text-sm">
-                      Rust
-                    </Badge>
+                    {profile.skillsToLearn.map((s, i) => (
+                      <Badge key={i} variant="outline" className="text-sm">
+                        {s}
+                      </Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>

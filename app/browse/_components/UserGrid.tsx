@@ -30,8 +30,8 @@ export default function UserGrid({ users, loading }: { users: TUser[], loading: 
             <div className="flex flex-col gap-2">
               <p className="text-xs font-medium text-blue-700">Teaches</p>
               <div className="flex flex-wrap gap-2">
-                {u.skillsToTeach.map(s => (
-                  <span key={s} className="bg-blue-100 text-blue-700 px-2 py-[3px] rounded-md text-xs">{s}</span>
+                {u.skillsToTeach.map((s, i) => (
+                  <span key={i} className="bg-blue-100 text-blue-700 px-2 py-[3px] rounded-md text-xs">{s}</span>
                 ))}
               </div>
             </div>
@@ -40,8 +40,8 @@ export default function UserGrid({ users, loading }: { users: TUser[], loading: 
             <div className="flex flex-col gap-2">
               <p className="text-xs font-medium text-green-700">Learns</p>
               <div className="flex flex-wrap gap-2">
-                {u.skillsToLearn.map(s => (
-                  <span key={s} className="bg-green-100 text-green-700 px-2 py-[3px] rounded-md text-xs">{s}</span>
+                {u.skillsToLearn.map((s, i) => (
+                <span key={i} className="bg-green-100 text-green-700 px-2 py-[3px] rounded-md text-xs">{s}</span>
                 ))}
               </div>
             </div>
