@@ -3,6 +3,7 @@ import { errorResponse, successResponse } from "../lib/api-response";
 import {
   createConversation,
   getConversation,
+  getUserConversations,
 } from "../services/conversation.service";
 import { isValidIdFormat } from "../helper/helper-functions";
 import { Request, Response } from "express";
@@ -56,3 +57,18 @@ export const getConversationController = async (req: Request, res: Response) => 
     return errorResponse(res, "Something went wrong", 500);
   }
 };
+
+export async function getUserConversationsController(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    const userId = user.id
+    const data = await getUserConversations(userId);
+    return successResponse(res, data);
+  } catch (error: any) {
+    if (error instanceof ApiError) {
+      return errorResponse(res, error.message, error.status);
+    }
+    console.error("Unexpected error:", error);
+    return errorResponse(res, "Something went wrong", 500);
+  }
+}

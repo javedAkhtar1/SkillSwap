@@ -117,75 +117,100 @@ export const useCompleteProfile = (token: string) => {
   });
 };
 
+// export const useSendMessage = (
+//   conversationId: string,
+//   senderId: string,
+//   senderName: string,
+//   token: string,
+// ) => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: (data: TMessageData) => sendMessages(data, token),
+
+//     onMutate: async (variables) => {
+//       await queryClient.cancelQueries({
+//         queryKey: ["messages", conversationId],
+//       });
+
+//       // get previous cached response
+//       const previous = queryClient.getQueryData<TMessagesResponse>([
+//         "messages",
+//         conversationId,
+//       ]);
+
+//       const previousMessages = previous?.messages || [];
+
+//       // create temp message
+//       const tempMessage: TMessage = {
+//         _id: "temp-" + Date.now(),
+//         conversation: conversationId,
+//         sender: { _id: senderId, name: senderName },
+//         text: variables.text,
+//         readBy: [],
+//         createdAt: new Date().toISOString(),
+//         updatedAt: new Date().toISOString(),
+//         __v: 0,
+//       };
+
+//       // update cache optimistically
+//       queryClient.setQueryData(
+//         ["messages", conversationId],
+//         (old?: TMessagesResponse) => ({
+//           messages: [...(old?.messages || []), tempMessage],
+//         })
+//       );
+
+//       return { previous, previousMessages, tempMessage };
+//     },
+
+//     onError: (err, _, context) => {
+//       console.error("Message send failed", err);
+//       if (context?.previous) {
+//         queryClient.setQueryData(
+//           ["messages", conversationId],
+//           context.previous
+//         );
+//       }
+//     },
+
+//     onSuccess: (newMessage: TMessage, _, context) => {
+//       queryClient.setQueryData(
+//         ["messages", conversationId],
+//         (old?: TMessagesResponse) => ({
+//           messages: (old?.messages || []).map((m) =>
+//             m._id === context?.tempMessage._id ? newMessage : m
+//           ),
+//         })
+//       );
+//     },
+//   });
+// };
+
+
+// new one without optimistic updates - relying on socket for real-time update
 export const useSendMessage = (
   conversationId: string,
   senderId: string,
   senderName: string,
-  token: string,
+  token: string
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: TMessageData) => sendMessages(data, token),
-
-    onMutate: async (variables) => {
-      await queryClient.cancelQueries({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
         queryKey: ["messages", conversationId],
       });
-
-      // get previous cached response
-      const previous = queryClient.getQueryData<TMessagesResponse>([
-        "messages",
-        conversationId,
-      ]);
-
-      const previousMessages = previous?.messages || [];
-
-      // create temp message
-      const tempMessage: TMessage = {
-        _id: "temp-" + Date.now(),
-        conversation: conversationId,
-        sender: { _id: senderId, name: senderName },
-        text: variables.text,
-        readBy: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        __v: 0,
-      };
-
-      // update cache optimistically
-      queryClient.setQueryData(
-        ["messages", conversationId],
-        (old?: TMessagesResponse) => ({
-          messages: [...(old?.messages || []), tempMessage],
-        })
-      );
-
-      return { previous, previousMessages, tempMessage };
     },
 
-    onError: (err, _, context) => {
+    onError: (err) => {
       console.error("Message send failed", err);
-      if (context?.previous) {
-        queryClient.setQueryData(
-          ["messages", conversationId],
-          context.previous
-        );
-      }
-    },
-
-    onSuccess: (newMessage: TMessage, _, context) => {
-      queryClient.setQueryData(
-        ["messages", conversationId],
-        (old?: TMessagesResponse) => ({
-          messages: (old?.messages || []).map((m) =>
-            m._id === context?.tempMessage._id ? newMessage : m
-          ),
-        })
-      );
     },
   });
 };
+
 
 export const useSendFriendRequest = (token: string) => {
   const queryClient = useQueryClient();

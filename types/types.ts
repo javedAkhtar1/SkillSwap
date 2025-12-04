@@ -70,7 +70,6 @@ export type TMessagesResponse = {
   messages: TMessage[];
 };
 
-
 export type TPopulatedUser = {
   _id: string;
   name: string;
@@ -84,7 +83,7 @@ export type TObjectId = string;
 export type TFriendRequestItem = {
   _id: string;
   from: TObjectId | TPopulatedUser;
-  to:   TObjectId | TPopulatedUser;
+  to: TObjectId | TPopulatedUser;
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
   updatedAt: string;
@@ -149,3 +148,25 @@ export type TAllUsersData = {
   limit: number;
   totalPages: number;
 };
+
+export type TConversationUser = {
+  _id: string;
+  name: string;
+  username: string;
+  profilePicture: string;
+};
+
+export type TConversation = {
+  _id: string;
+  participants: TConversationUser[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  lastMessage?: {
+    _id: string;
+    text: string;
+    createdAt: string;
+  };
+};
+
+export type TConversationsResponse = TConversation[];

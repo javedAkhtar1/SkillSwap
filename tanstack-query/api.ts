@@ -4,6 +4,7 @@ import {
   TAllUsersData,
   TApiQueryResponse,
   TCompleteProfileData,
+  TConversationsResponse,
   TFriendRequestListData,
   TMessageData,
   TMessagesResponse,
@@ -195,7 +196,7 @@ export const getPendingFriendRequestsReceived = async (
 };
 
 export const sendFriendRequest = async (to: string, token: string) => {
- try {
+  try {
     const response = await customAxios.post(
       `/api/friend-request/send`,
       { to },
@@ -210,7 +211,7 @@ export const sendFriendRequest = async (to: string, token: string) => {
     console.log("Error sending friend request:", error);
     throw error;
   }
-}
+};
 
 export const acceptFriendRequest = async (requestId: string, token: string) => {
   try {
@@ -300,14 +301,33 @@ export const editProfile = async (
   }
 };
 
-export const getAllUsers = async (page: number = 1, limit: number = 12, search?: string): Promise<TApiQueryResponse<TAllUsersData>> => {
+export const getAllUsers = async (
+  page: number = 1,
+  limit: number = 12,
+  search?: string
+): Promise<TApiQueryResponse<TAllUsersData>> => {
   try {
     const response = await customAxios.get(
-      `/api/user/all?page=${page}&limit=${limit}` + (search ? `&search=${encodeURIComponent(search)}` : "")
+      `/api/user/all?page=${page}&limit=${limit}` +
+        (search ? `&search=${encodeURIComponent(search)}` : "")
     );
     return response.data;
   } catch (error) {
     console.log("Error fetching all users:", error);
+    throw error;
+  }
+};
+
+export const getCurrentUserConversations = async (token: string): Promise<TApiQueryResponse<TConversationsResponse>> => {
+  try {
+    const response = await customAxios.get(`/api/conversation/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching current user conversations:", error);
     throw error;
   }
 };

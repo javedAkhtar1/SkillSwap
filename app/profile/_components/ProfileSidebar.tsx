@@ -17,6 +17,7 @@ import MyProfilePage from "./MyProfilePage";
 import RequestsSent from "./RequestsSent";
 import RequestsReceived from "./RequestsReceived";
 import Friends from "./Friends";
+import Messages from "../../(messages)/Messages";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -42,7 +43,7 @@ const Sidebar = () => {
 
   const componentsMap: Record<string, React.ReactNode> = {
     profile: <MyProfilePage />,
-    messages: <div>Messages</div>,
+    messages: <Messages />,
     friends: <Friends />,
     "requests-sent": <RequestsSent />,
     "requests-received": <RequestsReceived />,

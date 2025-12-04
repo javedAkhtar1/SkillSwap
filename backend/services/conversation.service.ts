@@ -4,8 +4,6 @@ import dbConnect from "../lib/dbConnect";
 import Conversation from "../models/conversation.model";
 import User from "../models/user.model";
 export async function createConversation(senderId: string, receiverId: string) {
-  await dbConnect();
-
   const isValidSender = await User.findById(senderId);
   const isValidReceiver = await User.findById(receiverId);
 
@@ -26,8 +24,6 @@ export async function createConversation(senderId: string, receiverId: string) {
 
 // gets one conversation between two users
 export async function getConversation(senderId: string, receiverId: string) {
-  await dbConnect();
-
   const isValidSender = await User.findById(senderId);
   const isValidReceiver = await User.findById(receiverId);
 
@@ -43,4 +39,13 @@ export async function getConversation(senderId: string, receiverId: string) {
     throw new ApiError("Conversation not found", 404);
   }
   return convo;
+}
+
+export async function getUserConversations(userId: string) {
+  const convos = await Conversation.find({ participants: userId })
+    .populate("participants", "name username profilePicture")
+    .populate("lastMessage", "text createdAt")
+    .sort({ updatedAt: -1 });
+
+  return convos;
 }
