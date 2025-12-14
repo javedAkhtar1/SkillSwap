@@ -17,15 +17,14 @@ export default function ChatWindow({ conversationId }: Props) {
   const userId = session?.user?.id || "";
   const senderName = session?.user?.username || "";
 
-  /** Fetch initial messages */
   const { data, isLoading } = useFetchMessages(conversationId, token);
   const messages: TMessage[] = data?.messages || [];
 
   const [text, setText] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
-  /** Join conversation room */
   useEffect(() => {
     if (!conversationId) return;
 
@@ -36,43 +35,38 @@ export default function ChatWindow({ conversationId }: Props) {
     };
   }, [conversationId]);
 
-  /* Listen for REALTIME incoming messages */
   useEffect(() => {
     const handleIncoming = (msg: TMessage) => {
-      const senderIdFromMsg =
+      const senderId =
         typeof msg.sender === "string" ? msg.sender : msg.sender?._id;
 
-      if (senderIdFromMsg === userId) return;
+      if (senderId === userId) return;
 
       queryClient.setQueryData(
         ["messages", conversationId],
-        (oldData: TMessagesResponse | undefined) => {
-          const prev = oldData?.messages || [];
-          return { messages: [...prev, msg] };
-        }
+        (old: TMessagesResponse | undefined) => ({
+          messages: [...(old?.messages || []), msg],
+        })
       );
     };
 
     socket.on("new_message", handleIncoming);
 
-    // CLEANUP MUST RETURN void
     return () => {
       socket.off("new_message", handleIncoming);
     };
   }, [conversationId, userId, queryClient]);
 
-  
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /** Send message */
+  /* Send message */
   const handleSend = () => {
     if (!text.trim()) return;
 
     const payload = { conversationId, senderId: userId, text };
 
-    // OPTIMISTIC UI update
     const tempMessage: TMessage = {
       _id: "temp-" + Date.now(),
       conversation: conversationId,
@@ -81,25 +75,27 @@ export default function ChatWindow({ conversationId }: Props) {
       readBy: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      status: "sending",
       __v: 0,
     };
 
     queryClient.setQueryData(
       ["messages", conversationId],
-      (oldData: TMessagesResponse | undefined) => {
-        const prev = oldData?.messages || [];
-        return { messages: [...prev, tempMessage] };
-      }
+      (old: TMessagesResponse | undefined) => ({
+        messages: [...(old?.messages || []), tempMessage],
+      })
     );
+
     socket.emit("send_message", payload);
 
     setText("");
+    inputRef.current?.focus(); // ✅ keep cursor
   };
 
   return (
     <div className="flex flex-col h-full">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
         {isLoading && <p>Loading...</p>}
 
         {messages.map((m) => {
@@ -108,13 +104,34 @@ export default function ChatWindow({ conversationId }: Props) {
           return (
             <div
               key={m._id}
-              className={`max-w-xs px-4 py-2 rounded-xl ${
-                isMine
-                  ? "bg-blue-600 text-white ml-auto"
-                  : "bg-gray-200 text-black"
+              className={`flex w-full ${
+                isMine ? "justify-end" : "justify-start"
               }`}
             >
-              {m.text}
+              <div
+                className={`max-w-xs px-4 py-2 rounded-xl break-words ${
+                  isMine ? "bg-blue-600 text-white" : "bg-gray-200 text-black"
+                }`}
+              >
+                {/* Text */}
+                <div className="text-sm leading-relaxed">{m.text}</div>
+
+                {/* Meta row */}
+                <div
+                  className={`mt-1 flex items-center justify-end gap-1 text-[10px] opacity-80 ${
+                    isMine ? "text-white" : "text-black"
+                  }`}
+                >
+                  <span>
+                    {new Date(m.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+
+                  {isMine && <span>{m.status === "sending" ? "⏳" : "✓"}</span>}
+                </div>
+              </div>
             </div>
           );
         })}
@@ -123,9 +140,10 @@ export default function ChatWindow({ conversationId }: Props) {
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t flex gap-2">
+      <div className="p-2 border-t flex items-center gap-2">
         <input
-          className="flex-1 border rounded px-3 py-2"
+          ref={inputRef}
+          className="flex-1 min-w-0 border rounded px-3 py-2 text-sm"
           placeholder="Type a message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -134,7 +152,7 @@ export default function ChatWindow({ conversationId }: Props) {
 
         <button
           onClick={handleSend}
-          className="bg-primary-btn hover:bg-primary-btn-hover px-4 rounded text-white"
+          className="shrink-0 bg-primary-btn hover:bg-primary-btn-hover px-3 py-2 text-sm rounded text-white"
         >
           Send
         </button>

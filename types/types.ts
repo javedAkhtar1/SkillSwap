@@ -63,6 +63,7 @@ export type TMessage = {
   readBy: string[];
   createdAt: string;
   updatedAt: string;
+  status?: "sending" | "sent" | "failed";
   __v: number;
 };
 
