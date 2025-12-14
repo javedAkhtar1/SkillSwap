@@ -129,7 +129,6 @@ export default function ChatWindow({ conversationId }: Props) {
                     })}
                   </span>
 
-                  {isMine && <span>{m.status === "sending" ? "⏳" : "✓"}</span>}
                 </div>
               </div>
             </div>

@@ -6,17 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Check, MessageCircle, UserPlus } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useGetProfileByUsername } from "@/tanstack-query/query";
 import Loading from "@/components/shared/Loading";
 import { useAuth } from "@/context/authProvider";
-import { useSendFriendRequest } from "@/tanstack-query/mutation";
+import {
+  useCreateConversation,
+  useSendFriendRequest,
+} from "@/tanstack-query/mutation";
 
 function OthersProfilePage() {
   const { username } = useParams();
   const { data: sessionData } = useAuth();
+  const router = useRouter()
   const token = sessionData?.accessToken || "";
   const { mutate, isPending } = useSendFriendRequest(token);
+  const { mutate: createConvo, isPending: convoPending } =
+    useCreateConversation(token);
 
   const { data: apiResponse, isLoading: profileLoading } =
     useGetProfileByUsername(username as string);
@@ -34,6 +40,10 @@ function OthersProfilePage() {
 
   function handleSendRequest() {
     mutate(profile._id);
+  }
+  function handleCreateConversation() {
+    createConvo(profile._id);
+    router.push("/profile/me")
   }
 
   return (
@@ -60,23 +70,25 @@ function OthersProfilePage() {
                 <p className="text-slate-600 mt-2">@{profile.username}</p>
                 <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
                   {isFriend ? (
-
                     <Badge className="bg-green-700 text-white px-4 text-sm">
                       <Check size={16} className="inline mr-1" />
-                      Friend</Badge>
-                  ): (
-                  <Button
-                    className="gap-2 bg-primary-btn hover:bg-primary-btn-hover hover:text-black text-sm h-9 hover:cursor-pointer"
-                    onClick={handleSendRequest}
-                    disabled={isPending}
-                  >
-                    <UserPlus size={16} />
-                    {isPending ? "Sending..." : "Send Request"}
-                  </Button>
-                )}
+                      Friend
+                    </Badge>
+                  ) : (
+                    <Button
+                      className="gap-2 bg-primary-btn hover:bg-primary-btn-hover hover:text-black text-sm h-9 hover:cursor-pointer"
+                      onClick={handleSendRequest}
+                      disabled={isPending}
+                    >
+                      <UserPlus size={16} />
+                      {isPending ? "Sending..." : "Send Request"}
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     className="gap-2 text-sm h-9 bg-secondary-btn hover:cursor-pointer"
+                    onClick={handleCreateConversation}
+                    disabled={convoPending}
                   >
                     <MessageCircle size={16} />
                     Message

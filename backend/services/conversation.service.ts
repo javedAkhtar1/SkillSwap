@@ -1,6 +1,4 @@
 import { ApiError } from "../lib/api-error";
-import { errorResponse } from "../lib/api-response";
-import dbConnect from "../lib/dbConnect";
 import Conversation from "../models/conversation.model";
 import User from "../models/user.model";
 export async function createConversation(senderId: string, receiverId: string) {
