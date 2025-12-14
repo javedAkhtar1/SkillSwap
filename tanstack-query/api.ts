@@ -331,3 +331,17 @@ export const getCurrentUserConversations = async (token: string): Promise<TApiQu
     throw error;
   }
 };
+
+export const createConversation = async (receiverId: string, token: string) => {
+  try {
+    const response = await customAxios.post(`/api/conversation/create`, { receiverId }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error creating conversation:", error);
+    throw error;
+  }
+}

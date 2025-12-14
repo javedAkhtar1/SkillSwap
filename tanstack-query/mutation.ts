@@ -3,6 +3,7 @@ import {
   acceptFriendRequest,
   changePassword,
   completeProfile,
+  createConversation,
   editProfile,
   rejectFriendRequest,
   sendFriendRequest,
@@ -284,6 +285,19 @@ export const useEditProfile = (token: string) => {
       toast.success("Profile updated");
       queryClient.invalidateQueries({
         queryKey: ["profile"],
+      });
+    },
+  });
+}
+
+export const useCreateConversation = (token: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (receiverId: string) => createConversation(receiverId, token),
+    onSuccess: () => {
+      toast.success("Conversation created");
+      queryClient.invalidateQueries({
+        queryKey: ["conversations"],
       });
     },
   });
